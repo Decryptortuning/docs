@@ -1,1 +1,31 @@
-# docs
+# OpenSolo modern port project documentation
+
+The recovered OpenSolo port builds the controller on Yocto Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. The current controller baseline passes image validation, 26 maintenance fault tests and ARM userspace checks. Physical controller acceptance and the drone media port remain open.
+
+Last updated: October 8, 2026.
+
+## Project guides
+
+| Guide | Purpose |
+|---|---|
+| [Project status and evidence](status-and-evidence.md) | Current controller baseline, artifact identity, validation coverage and remaining limits. |
+| [Workspace and source ownership](workspace-and-sources.md) | Repository locations, layer responsibilities, source pins and where changes belong. |
+| [Build and validation](build-and-test.md) | Repeatable WSL build commands, CPU settings, input verification and checks. |
+| [Board support](board-support.md) | Machine definitions, hardware format migration and unresolved controller/drone BSP work. |
+| [Boot and recovery](boot-and-recovery.md) | Disk layout, provisioning, updates, reset behavior and recovery limits. |
+| [Project roadmap](roadmap.md) | Next software work, hardware milestones and acceptance criteria. |
+| [Decisions and build history](decisions-and-history.md) | Integration decisions, completed milestones and how to maintain these guides. |
+
+Use [Build and validation](build-and-test.md) to resume work on this machine. Use [Project status and evidence](status-and-evidence.md) to identify the verified image before a hardware session.
+
+## Local entry points
+
+The active source/build workspace is `/home/jresp/solo`. Build wrappers, templates, tests and the source lock are in the [WSL recovery integration repository](/mnt/c/Users/JResp/Documents/ChatGPT/OPenSolo_2/README.md). This documentation checkout is `/home/jresp/solo/workspace/docs`; its configured Git origin is `https://github.com/Decryptortuning/docs.git`.
+
+The [original board support audit](/mnt/c/Users/JResp/Documents/ChatGPT/OPenSolo_2/OpenSolo-board-support-audit.md) records the recovered December 2025 snapshot. Consult the current guides for the status of findings addressed since that audit.
+
+## Historical material
+
+[Recovered build environment notes](build-env.md) retain the original local edits. Their active-layer list, setup procedure and build wrapper describe the earlier workspace; the current procedure is [Build and validation](build-and-test.md).
+
+[WSL recovery notes before consolidation](history/wsl-recovery-20261008.md) preserve the former integration README as a dated snapshot. New project status and procedures belong in the guides above.
