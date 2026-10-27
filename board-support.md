@@ -60,6 +60,6 @@ UART5's legacy KEY_COL1/KEY_ROW1 pin group is also absent from the modern drone 
 
 ## Audit context and acceptance
 
-Detailed source/effective-config findings are in the [original board support audit](/mnt/c/Users/JResp/Documents/ChatGPT/OPenSolo_2/OpenSolo-board-support-audit.md). Its evidence directory is local to this restored machine. The audit's DHCP, image staging, release source selection and provisioning/update findings have since received software fixes, recorded in [Project status](status-and-evidence.md) and [Decisions and build history](decisions-and-history.md).
+Detailed source/effective-config findings are in the [original board support audit](/home/jresp/Active_GH/OPenSolo_2/OpenSolo-board-support-audit.md). Its evidence directory is local to this restored machine. The audit's DHCP, image staging, release source selection and provisioning/update findings have since received software fixes, recorded in [Project status](status-and-evidence.md) and [Decisions and build history](decisions-and-history.md).
 
 Further BSP work needs effective configuration inspection, device-tree schema checks against the pinned bindings, rebuilt image validation and confirmed board observations. Archived logs remain useful diagnostics; their successful boot or earlier reset symptom is not a result for the current baseline.

@@ -6,7 +6,7 @@ The workspace keeps application repositories, product metadata, board support, v
 
 | Location | Role |
 |---|---|
-| `/mnt/c/Users/JResp/Documents/ChatGPT/OPenSolo_2` | Integration Git repository, build wrappers, `workspace-lock.json`, tests and audit. Windows path: `C:\Users\JResp\Documents\ChatGPT\OPenSolo_2`. |
+| `/home/jresp/Active_GH/OPenSolo_2` | Integration Git repository ([Decryptortuning/OPenSolo_2](https://github.com/Decryptortuning/OPenSolo_2)), build wrappers, `workspace-lock.json`, tests and audit. |
 | `/home/jresp/solo/apps` | Recovered application Git checkouts. |
 | `/home/jresp/solo/workspace/layers/meta-3dr` | Product layer: distro policy, applications, networking, image generation and boot/update scripts. |
 | `/home/jresp/solo/workspace/layers/meta-solo-bsp` | BSP layer: machines, kernel device trees/configuration and U-Boot board support. |

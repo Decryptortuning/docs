@@ -43,4 +43,4 @@ The original board audit's controller DHCP, image staging, input selection, laye
 
 Date validation results and preserve artifact identity. Keep build/emulation evidence distinct from physical observations. Update the current guide when behavior changes, and preserve earlier evidence as dated history rather than leaving competing active procedures.
 
-The [original audit](/mnt/c/Users/JResp/Documents/ChatGPT/OPenSolo_2/OpenSolo-board-support-audit.md), [recovered build notes](build-env.md) and [former recovery README](history/wsl-recovery-20261008.md) provide historical context. New material belongs in the current guides; the recovered `build-env.md` retains its existing local edits.
+The [original audit](/home/jresp/Active_GH/OPenSolo_2/OpenSolo-board-support-audit.md), [recovered build notes](build-env.md) and [former recovery README](history/wsl-recovery-20261008.md) provide historical context. New material belongs in the current guides; the recovered `build-env.md` retains its existing local edits.

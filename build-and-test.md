@@ -7,7 +7,7 @@ Run the pinned recovery build through the integration scripts from a normal Ubun
 Run inside WSL:
 
 ```bash
-cd /mnt/c/Users/JResp/Documents/ChatGPT/OPenSolo_2
+cd /home/jresp/Active_GH/OPenSolo_2
 python3 scripts/configure.py controller --check
 bash scripts/build.sh controller -p
 bash scripts/build.sh controller -n
