@@ -13,19 +13,41 @@ survived. Therefore no ROM identity/readback result can be claimed. The bridge
 and Wi-Fi/SSH subsequently returned, and calibration still matches. No flash
 commands are available through the helper's command whitelist.
 
+The user confirmed these restarts were spontaneous and the controller is on
+battery power only. A later durable run narrowed the failure to the GPIO46
+reset operation: bridge pause and UART open completed; GPIO45 BOOT-high was
+read back successfully as output/high; the final saved phase was
+`gpio-46-1-pending`. No ROM sync acknowledgement was recorded. Linux boot ID
+changed again to `c882df50-4510-402e-aa3e-be07c649742d` after recovery.
+
+A separate diagnostic run aborted before GPIO activity on a parameter-request
+timeout. That is recorded as a runtime-transport failure, not another reset.
+The initial 100-read runtime test remains a distinct successful sample.
+
+Read-only GPIO2 register inspection after recovery showed GPIO45 and GPIO46
+both configured as inputs and sampled low. Register offsets were checked
+against the actual `gpio-mxc` driver and the bank against its sysfs label;
+no registers were written. Normal application and calibration were recovered.
+
 Artoo's existing power initialization configures PC14 and briefly disables
 IMX6 power before starting normally. This is a candidate explanation, not a
-proven reset cause. The original helper's assumption that Linux survives all
-MCU resets is now unqualified. Do not rerun the old helper or proceed with the
-historical manual flash job. Clarification about physical power-button activity
-is pending; the exact reset phase must be isolated first.
+proven electrical reset cause. The original flashing guide expects Wi-Fi to
+remain connected during a normal update. The original helper's assumption that
+Linux survives MCU reset is unqualified on this battery-powered unit. Do not
+proceed with the historical manual flash job.
 
-Integration `05c5636` prepares a revised **single-cycle** helper with durable
-boot-ID/phase receipts before runlevel changes, ROM entry, identity, readbacks,
-release and bridge restoration. It fsyncs the result and directory metadata
-before reset-sensitive steps. It passed syntax validation, but has not been
-installed or run. Evidence is in
-`/home/jresp/solo/.integration/artoo-serial-preflight-20261028/`.
+Integration `e98a68a` prepares a single-cycle helper with durable boot-ID/phase
+receipts before runlevel changes, each individual GPIO operation, ROM entry,
+identity, readbacks, release and bridge restoration. It fsyncs results and
+directory metadata before reset-sensitive steps. The helper was installed and
+run; results prove the reset-operation boundary above, **not** ROM readiness.
+Further GPIO/ROM tests are stopped pending a physical charger-connected power
+comparison, with the battery retained. Charger power is a hypothesis to test,
+not a declared fix. No firmware erase/program/protection commands were sent.
+
+Evidence: `/home/jresp/solo/.integration/artoo-serial-preflight-20261028/`,
+including `recovered-runs.json`, individual run-result receipts,
+`runtime-100-reads.json`, and `gpio-normal-readonly.json`.
 
 ## Observed connection
 
@@ -69,7 +91,8 @@ firmware verification failures. Source review and logs:
 The loader fixes are installed and hash-checked on the controller as an overlay
 (SHA256 `d3a094529e9d250d919e2988e360c12febdb06a6311cb2d3bfcf99504337ddf4`).
 They are pinned for future image builds; no new full image build was needed for
-this standalone Python tool. The revised diagnostic helper itself is still local.
+this standalone Python tool. The diagnostic helper is installed for explicit one-shot use and has no boot
+service or automatic retry.
 
 ## Prepared non-flashing live test
 
