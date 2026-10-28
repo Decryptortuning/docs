@@ -18,11 +18,13 @@ The workspace keeps application repositories, product metadata, board support, v
 | `/home/jresp/solo/.integration` | Generated native configuration, preserved native tar, logs and validation reports. |
 | `/home/jresp/solo/workspace/docs` | These central project guides. |
 | `/home/jresp/solo/workspace/scripts` | Recovered helper scripts with preserved local changes. |
-| `/home/jresp/solo/OPENSOLO_REFERENCE` | Original OpenSolo reference repositories and packages used for comparison. |
+| `/home/jresp/solo/OPENSOLO_REFERENCE` | Original OpenSolo reference repositories and initialized submodules used for comparison. |
+| `/home/jresp/solo/hardware-docs` | Controller/drone schematics, pinout PDFs and BSP research notes. |
+| `/home/jresp/solo/logs` and `/home/jresp/solo/artifacts` | Recovered boot logs and older image material. |
 | `/home/jresp/solo/recovery` | Original state, configuration history and verified image snapshots. |
 | `C:\Users\JResp\Desktop\opensolotemp` | Original Windows archive location. |
 
-Yocto builds and caches use the native WSL filesystem. The Windows integration checkout supplies small templates and commands; configuration is copied to `.integration` before BitBake reads it.
+The integration repository, source checkouts, builds and caches all use native WSL storage. The integration checkout is `/home/jresp/Active_GH/OPenSolo_2`; the multi-repository build workspace remains `/home/jresp/solo`. Generated configuration is copied to `.integration` before BitBake reads it. The former Windows integration location is no longer used.
 
 ## Layer responsibilities
 
@@ -54,4 +56,4 @@ Edit real source repositories. Files under `build-*/tmp/work` are generated task
 
 After an intentional layer commit, update its lock entry and regenerate both targets as described in [Build and validation](build-and-test.md). Keep the preserved dirty state of historical docs/scripts separate from new commits; do not silently include those edits.
 
-New Git clones on this machine normally belong under `C:\Users\JResp\Documents\Active_GH` in a repository-named folder. The restored native WSL workspace is an existing, deliberately preserved project location.
+New Linux, web, Android and kernel repositories belong under `/home/jresp/Active_GH` in WSL `Ubuntu-24.04`, using WSL Git and native Linux tooling. Repositories requiring native Windows tools use `C:\Users\JResp\Documents\Active_GH`. An explicitly requested destination takes precedence. The restored `/home/jresp/solo` workspace remains in its existing native location.

@@ -6,7 +6,7 @@ The recovery keeps the original project layout and NXP Scarthgap baseline while 
 
 | Decision | Reason and consequence |
 |---|---|
-| Keep source/builds/caches under native WSL storage | Yocto work stays on `/home/jresp/solo`; the Windows integration checkout supplies small templates and commands. |
+| Keep source/builds/caches under native WSL storage | Yocto work stays on `/home/jresp/solo`; the integration repository now lives at `/home/jresp/Active_GH/OPenSolo_2` and supplies templates and commands. |
 | Keep separate app repositories and two active custom layers | `meta-3dr` owns product policy; `meta-solo-bsp` owns boards. A wholesale monorepo conversion is unnecessary for the current recovery. |
 | Retain the pinned NXP vendor layer set | Complete the port against a known Linux 6.6.52/U-Boot 2024.04 baseline before independently changing upstream versions. |
 | Use an exact source lock for the baseline | Recipe pins and clean vendor/layer checks prevent accidental source drift. Local app development requires a separate explicit profile. |
@@ -30,6 +30,14 @@ The recovery keeps the original project layout and NXP Scarthgap baseline while 
 The maintenance work required actual ARM utility probes: minimal BusyBox lacks the advanced `od`/`head` options assumed by host tools. The final implementation uses supported header/readback operations and enables only required `dd` conversion/flush support. This is why source syntax or host-only tests are insufficient evidence for target maintenance code.
 
 The original board audit's controller DHCP, image staging, input selection, layer organization and provisioning/update software findings have been addressed to the recorded software-test level. Physical behavior, drone media, an explicit development profile, recipe/package cleanup and broader rollback/reproducibility work remain in the [roadmap](roadmap.md).
+
+## WSL relocation verification on October 28 2026
+
+The integration checkout moved to `/home/jresp/Active_GH/OPenSolo_2`; the source/build/cache workspace remains `/home/jresp/solo`. All ten project repositories and seventeen vendor repositories were located. The docs revision in the lock was synchronized, and both managed target configurations were regenerated and checked.
+
+Controller image regeneration passed 7,039 tasks with 7,030 current; all 26 maintenance tests and ARM probes passed again. The final-source controller recheck reused all 7,039 tasks with identical artifact hashes. The drone's missing `gstreamer1.0-plugins-bad-kms` package was fixed in the product layer using a machine-scoped append. NXP's dynamic architecture class requires its `MACHINE_ARCH_FILTER` mechanism; a plain `PACKAGE_ARCH` setting was overridden. Final metadata and installed manifest checks prove the drone-specific package scope and ARM plugin.
+
+The final drone build passed 7,026 tasks with 6,985 current; SD/update and initramfs checks passed. Artifact snapshots are under `/home/jresp/solo/recovery/wsl-relocation-20261028`. See [the relocation record](wsl-relocation-20261028.md) for exact inputs, initial failure evidence and hardware limits.
 
 ## Documentation ownership
 

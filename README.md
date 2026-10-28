@@ -1,8 +1,8 @@
 # OpenSolo modern port project documentation
 
-The recovered OpenSolo port builds the controller on Yocto Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. The current controller baseline passes image validation, 26 maintenance fault tests and ARM userspace checks. Physical controller acceptance and the drone media port remain open.
+The recovered OpenSolo port builds controller and drone images on Yocto Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. The current controller baseline passes image validation, 26 maintenance fault tests and ARM userspace checks. Physical controller acceptance and the drone media port remain open.
 
-Last updated: October 8, 2026.
+Last updated: October 28, 2026. Both image targets were rebuilt and validated after the integration checkout moved to native WSL storage; see [WSL relocation verification](wsl-relocation-20261028.md).
 
 ## Project guides
 

@@ -55,9 +55,26 @@ bash scripts/build.sh drone -p
 bash scripts/build.sh drone -n
 ```
 
-The drone target is `imx_drone`, image `3dr-solo`, build directory `build-solo`. A future image build uses `bash scripts/build.sh drone`; validate it with `validate-image.py drone --deploy /home/jresp/solo/workspace/yocto/imx-yocto-bsp/build-solo/tmp/deploy/images/imx_drone` and `validate-initramfs.py drone`.
+The drone target is `imx_drone`, image `3dr-solo`, build directory `build-solo`. Build and validate it from the integration repository:
+
+```bash
+bash scripts/build.sh drone
+python3 scripts/validate-image.py drone \
+  --deploy /home/jresp/solo/workspace/yocto/imx-yocto-bsp/build-solo/tmp/deploy/images/imx_drone
+python3 scripts/validate-initramfs.py drone
+```
 
 Controller metadata and common maintenance code do not establish drone capture support. Complete the [drone board work](board-support.md#drone-media-pipeline) before treating a generated drone image as a hardware candidate.
+
+## Regenerate an image to check packaging
+
+A normal build can succeed with every task already current. To exercise controller rootfs creation, squashfs, SD packaging and update archive production again while reusing compiled packages:
+
+```bash
+bash scripts/build.sh controller -C rootfs
+```
+
+This deliberately invalidates the rootfs task and runs its dependent image tasks. BitBake reports a forced-task/tainted-hash warning for this request. Validate and preserve the resulting artifact set; this is image regeneration with cached dependencies, not a full clean rebuild.
 
 ## Changing pinned inputs
 

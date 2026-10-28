@@ -2,7 +2,7 @@
 
 The controller's pinned build, DHCP packaging and maintenance failure handling are complete at the current software-test level. Continue with configuration recovery and source/package ownership while arranging a separate controller hardware acceptance session. Drone media completion remains its own larger BSP milestone.
 
-Status date: October 8, 2026. Acceptance items below are pending unless explicitly marked complete.
+Status date: October 28, 2026. Acceptance items below are pending unless explicitly marked complete.
 
 ## Completed foundation
 
@@ -12,7 +12,7 @@ Status date: October 8, 2026. Acceptance items below are pending unless explicit
 | Pin and guard build inputs | Ten project repositories, seventeen vendor repositories, eight recipe pins and generated-config checks. |
 | Restore layer responsibilities | Product distro in `meta-3dr`, BSP in `meta-solo-bsp`, dependencies declared and `meta-solo` inactive. |
 | Restore controller DHCP and image ownership | Verified machine-scoped snippet, `IMGDEPLOYDIR` outputs and exact rootfs producer selection. |
-| Rebuild and inspect controller artifacts | Successful builds and complete image/update validation; verified deployment copy preserved. |
+| Rebuild and inspect both image targets | Controller rootfs/image regeneration and new drone image pass producer/update/initramfs validation; October 28 snapshots preserved. |
 | Improve maintenance recovery | Recorded provisioning/resets, checked update copies/hashes/unmounts and bounded verified raw writes; 26 fault tests and ARM utility probes passed. |
 | Consolidate project documentation | Central status, workspace, build, BSP, recovery and roadmap guides in this repository. |
 
@@ -57,7 +57,7 @@ Acceptance: versioned image identity, serial logs and observations demonstrate t
 
 ## Drone completion
 
-Complete the driver/configuration/graph/input/reset/bus-width work in [Board support](board-support.md#drone-media-pipeline), rebuild the drone image and validate its producer payloads. Inspect effective kernel options and schema diagnostics before hardware capture testing.
+The October 28 drone image now builds and passes payload/initramfs validation after the KMS packaging fix. Complete the driver/configuration/graph/input/reset/bus-width work in [Board support](board-support.md#drone-media-pipeline), then rebuild and validate the changed image. Inspect effective kernel options and schema diagnostics before hardware capture testing.
 
 Acceptance: a coherent ADV7610-to-capture pipeline produces the intended formats and encoded video, with verified reset/routing behavior and restart handling. Regenerated SD/update payloads match their exact producers; archived mismatched drone artifacts are not reused as the acceptance image.
 
