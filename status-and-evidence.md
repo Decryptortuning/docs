@@ -14,6 +14,7 @@ As of October 28, 2026, both controller and drone images build and pass image/in
 | ARM controller userspace | Passed | DNSMasq syntax, Python 3.12.6, SSL/PySerial imports, SLIP roundtrip/timeout recovery and pairing configuration. |
 | Earlier static startup review | Passed with follow-ups | All 126 startup links and inittab commands present; syntax checks passed for 82 Python and 64 shell scripts. Optional tools have unresolved imports; imported `usb.py` has the wrong shebang. |
 | Drone build and payloads | Passed | 7,026 tasks succeeded; 6,985 were current on the final build. SD/update payloads and embedded machine/source identity match; the KMS package and ARM plugin are present. |
+| Controller SD preparation | Passed | The confirmed 7.95 GB card was flashed; all 197,133,312 written bytes passed SHA-256 readback. Backup skipped at the user's request. |
 | Controller boot, DHCP leases and pairing | Pending hardware | Earlier recovered logs describe an older image and do not validate the current baseline. |
 | Drone capture and ADV7610 reset/routing | Open | Source/effective-config audit found incompatible bridge selection and reset semantics. |
 | Physical reset gesture and early board GPIO sequencing | Open | Legacy behavior was omitted during the port. |
@@ -49,6 +50,12 @@ The SD filename is `3dr-controller-imx_controller.rootfs.sdcard`; the update arc
 | [Earlier effective metadata check](/home/jresp/solo/.integration/effective-metadata-validation.json) | Both targets' source pins, 32-thread settings and controller-only DHCP scope at that earlier build. |
 
 The controller regeneration log is [controller-20261028-091908.log](/home/jresp/solo/.integration/logs/controller-20261028-091908.log); the final drone log is [drone-20261028-093540.log](/home/jresp/solo/.integration/logs/drone-20261028-093540.log). The [controller final-source recheck](/home/jresp/solo/.integration/relocation-20261028/controller-final-recheck.json) records the later successful controller build. The [fault-test log](/home/jresp/solo/.integration/relocation-20261028/maintenance-tests.log) records 26 passing tests. Reports and exact inputs are copied with the verified artifacts; working report paths may be overwritten by later checks.
+
+## Controller card preparation on October 28
+
+The confirmed controller card was flashed with the verified October 28 image. Readback of all 197,133,312 written bytes matched SHA-256 `bc56f806b3d9f0241ce613d979a044385c24f3836946adf08816dccf40958632` after flushing the block-device cache. The new partition table contains GOLDEN only, starting at 4 MiB with a 184 MiB partition; the initramfs will create LATEST/RWFS/LOG on first boot.
+
+No original card backup was made, following the user's explicit instruction. The temporary WSL USB attachment/sharing was removed and the reader returned to Windows. The [flash receipt](/home/jresp/solo/recovery/controller-card-20261028-3136cfec/complete.json) and [readback evidence](/home/jresp/solo/recovery/controller-card-20261028-3136cfec/readback-verified.json) record the exact source, target identity and checks. Physical controller boot, networking and pairing remain pending.
 
 ## Boundaries for using these results
 

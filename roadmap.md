@@ -44,7 +44,7 @@ Acceptance before hardware: reviewed source/board mappings, effective configurat
 
 ## Controller hardware acceptance
 
-Start from the [verified baseline](status-and-evidence.md#verified-controller-baseline). Each physical action needs the user's confirmation; identify and confirm the exact storage/serial device before accessing it or writing an image.
+The selected controller card was flashed and readback-verified on October 28; its first controller boot remains pending. Start from the [verified baseline](status-and-evidence.md#verified-controller-baseline). Each physical action needs the user's confirmation; identify and confirm the exact storage/serial device before accessing it or writing an image.
 
 1. Resolve host-to-controller UART transmission and capture an uninterrupted current boot log.
 2. Verify ROM/U-Boot device mapping, detected RAM and kernel command line against the image being tested.

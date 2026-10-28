@@ -2,6 +2,8 @@
 
 Both image targets build from the integration repository at `/home/jresp/Active_GH/OPenSolo_2`. The multi-repository source, build and cache workspace remains `/home/jresp/solo`. This verification exercised fresh image production and target userspace without accessing a physical controller or drone.
 
+This record covers build verification before the card was written. The later [controller card preparation](status-and-evidence.md#controller-card-preparation-on-october-28) records the completed flash/readback and the user-requested omission of a backup.
+
 ## Located material
 
 All ten project Git repositories and seventeen pinned vendor repositories were located. Active layer/vendor revisions are clean and match the working lock. The preserved local edits remain in `workspace/docs/build-env.md` and `workspace/scripts`.
