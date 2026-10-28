@@ -15,7 +15,8 @@ As of October 28, 2026, both controller and drone images build and pass image/in
 | Earlier static startup review | Passed with follow-ups | All 126 startup links and inittab commands present; syntax checks passed for 82 Python and 64 shell scripts. Optional tools have unresolved imports; imported `usb.py` has the wrong shebang. |
 | Drone build and payloads | Passed | 7,026 tasks succeeded; 6,985 were current on the final build. SD/update payloads and embedded machine/source identity match; the KMS package and ARM plugin are present. |
 | Controller SD preparation | Passed | The confirmed 7.95 GB card was flashed; all 197,133,312 written bytes passed SHA-256 readback. Backup skipped at the user's request. |
-| Controller boot, DHCP leases and pairing | Pending hardware | Earlier recovered logs describe an older image and do not validate the current baseline. |
+| Controller first boot and STM32 link | Observed | Current card provisioned and logs show sustained STM32 traffic; see filesystem qualification below. |
+| Real DHCP leases and aircraft pairing | Pending hardware | Daemon startup/range configuration is observed; no client lease or aircraft pairing established. |
 | Drone capture and ADV7610 reset/routing | Open | Source/effective-config audit found incompatible bridge selection and reset semantics. |
 | Physical reset gesture and early board GPIO sequencing | Open | Legacy behavior was omitted during the port. |
 | Clean rebuild and bit-for-bit reproducibility | Open | Successful incremental/cache-based builds do not establish a full clean rebuild; `/VERSION` still contains wall-clock build content. |
@@ -55,7 +56,15 @@ The controller regeneration log is [controller-20261028-091908.log](/home/jresp/
 
 The confirmed controller card was flashed with the verified October 28 image. Readback of all 197,133,312 written bytes matched SHA-256 `bc56f806b3d9f0241ce613d979a044385c24f3836946adf08816dccf40958632` after flushing the block-device cache. The new partition table contains GOLDEN only, starting at 4 MiB with a 184 MiB partition; the initramfs will create LATEST/RWFS/LOG on first boot.
 
-No original card backup was made, following the user's explicit instruction. The temporary WSL USB attachment/sharing was removed and the reader returned to Windows. The [flash receipt](/home/jresp/solo/recovery/controller-card-20261028-3136cfec/complete.json) and [readback evidence](/home/jresp/solo/recovery/controller-card-20261028-3136cfec/readback-verified.json) record the exact source, target identity and checks. Physical controller boot, networking and pairing remain pending.
+No original card backup was made, following the user's explicit instruction. The temporary WSL USB attachment/sharing was removed and the reader returned to Windows. The [flash receipt](/home/jresp/solo/recovery/controller-card-20261028-3136cfec/complete.json) and [readback evidence](/home/jresp/solo/recovery/controller-card-20261028-3136cfec/readback-verified.json) record the exact source, target identity and checks. First controller boot has now been observed; see the first-boot evidence below for results and remaining checks.
+
+## First controller boot evidence — October 28
+
+Read-only inspection after the observed “Waiting for Solo” boot confirms all four intended partitions and matching build payload hashes on both GOLDEN and LATEST. Configuration templates produced hostapd/wpa_supplicant/SoloLink settings; dnsmasq started with the intended DHCP range. Logs show sustained STM32 traffic, running firmware `OpenSolo-4dev`, explicitly disabled MCU updates, and a subsequent STM32-requested shutdown. The provisioning marker is gone and the update READY marker exists.
+
+This is partial hardware acceptance. RWFS has `needs_recovery`; read-only e2fsck skipped journal recovery and reported free-block/inode allocation-count differences. Do not interpret its exit code alone as a clean result. LOG passed its read-only check. No repair, journal replay or card backup was performed. Other follow-ups are a redundant legacy golden-to-system script abort, fallback 2018 clock, HDMI-audio probe ordering and NFC daemon initialization. Real DHCP leases, aircraft pairing, joystick calibration, video/audio and a second boot from LATEST remain unverified.
+
+[Inspection summary](/home/jresp/solo/recovery/controller-firstboot-20261028-4b853a54/summary.json) and logs are preserved with the read-only filesystem and payload reports. The reader was detached from WSL and temporary USB sharing removed.
 
 ## Boundaries for using these results
 
