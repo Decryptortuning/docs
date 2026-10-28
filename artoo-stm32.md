@@ -64,3 +64,58 @@ Historical documentation used Ubuntu 14.04 Vagrant, Python 2 and unpinned PPA/pi
 6. Define how the accepted binary and its true version enter Yocto. Review the enabled-update path before any MCU programming.
 
 Hardware work later needs the actual MCU marking, board revision/pinout, target voltage/reference/reset handling and an explicitly selected probe or controller-side loader procedure. The sample `.gdbinit` attaches and writes a debug register, so do not treat it as a read-only inspection script. WSL USB transport is described by [Microsoft](https://learn.microsoft.com/en-us/windows/wsl/connect-usb).
+
+## Local layout and rebuild plan — October 28, 2026
+
+This is the proposed execution sequence. The checkouts have not been moved, rebased or built by this planning step.
+
+### Target layout
+
+| Location | Ownership |
+|---|---|
+| `/home/jresp/Active_GH/artoo-firmware` | Primary working checkout of Decryptortuning's MCU firmware. |
+| `/home/jresp/Active_GH/stm32loader` | Primary working checkout of the controller-specific uploader. |
+| `/home/jresp/Active_GH/OpenSolo` | Canonical upstream checkout used to compare and extract component history. |
+| `/home/jresp/Active_GH/OPenSolo_2` | Integration manifest, build/validation wrappers and source-to-Yocto handoff. |
+| `/home/jresp/solo/.integration/artoo-builds` | Versioned build reports and candidate artifacts, separate from accepted images. |
+| `/home/jresp/solo/workspace/docs` | Central procedures, findings and acceptance evidence. |
+
+Use WSL Git and native Linux tooling. Keep source repositories independent and record them in the integration manifest; this plan does not introduce submodules. Python environments and Tup-generated files belong to ignored per-repository locations. Pin external compiler/dependency versions and preserve accepted ELF/MAP/BIN artifacts with their source/tool identities.
+
+### 1. Preserve and establish the working checkouts
+
+Record existing heads, branches, tags and local changes. Preserve the current source refs and supplied v3.0.0 binary. Create the new repository-named working checkouts from the existing owner repositories, retaining history and any local-only refs; verify them before retiring the old app locations. Do not remove the recovered/reference sources or change remote main/PORT branches.
+
+Update workspace discovery, the source inventory and active documentation together to support the separate development root. Keep archived locks as evidence of their original locations. Leave the current fetched-source Yocto baseline in place while qualifying the MCU build.
+
+Acceptance: one documented primary working checkout per component, complete recoverable history and a consistent source inventory; both existing Yocto configuration guards still pass.
+
+### 2. Reconcile with canonical upstream
+
+Pin the canonical OpenSolo revision, compare its `artoo/` component against the owner import and inventory all differences. Extract the Artoo subtree history into a standalone upstream baseline. On a new `codex/` branch, replay the owner's actual Python-port and documentation changes onto that component baseline. Review conflicts and intentional differences; do not blindly rebase the standalone root onto the full monorepo root.
+
+Do the equivalent provenance/delta review for STM32Loader, retaining its controller-specific UART/GPIO behavior. Choose the matching canonical component baseline before replaying the Python 3 changes; do not substitute an unrelated generic PC uploader.
+
+Acceptance: reviewed owner-versus-upstream delta, retained later canonical features, recorded source-to-subtree mapping and preserved original refs. No force-push or remote branch replacement is part of this local phase.
+
+### 3. Restore a reproducible software-only build
+
+Install and pin the qualified candidate tools: Tup, ARM bare-metal GCC/binutils/newlib and a project Python virtual environment with Pillow. First address interpreter selection, font metric compatibility and explicit version provenance. Retain the Tup pipeline and begin with its generated build-script path. Resolve compiler/runtime issues surfaced by the actual build without disabling diagnostic checks globally.
+
+Build firmware and validate the uploader's Python behavior without any serial device. Check ELF vectors/constructors, FLASH/parameter-page boundaries, SRAM/stack headroom, asset geometry and protocol fixtures. Preserve the exact compiler/package versions, source revisions and generated ELF/MAP/BIN/hash reports.
+
+Acceptance: clean, repeatable firmware builds with meaningful embedded versions, validated memory/assets and hardware-free loader/updater checks. This is the first milestone before feature updates; it does not establish board runtime correctness.
+
+### 4. Connect the accepted firmware to Yocto
+
+Define an explicit artifact contract: MCU source revision, real firmware version, toolchain identity, binary hash and board selection. Replace the manual stale-binary handoff with a documented build/package step or an appropriately scoped recipe that consumes the accepted artifact. Decide this implementation after the standalone build works.
+
+Repair the Linux-side updater's bytes handling and disabled-update candidate handling, with failure/skip tests. Rebuild and inspect the controller image to prove it carries the intended binary and metadata. Keep MCU programming opt-in.
+
+Acceptance: the packaged bytes/version match the accepted standalone artifact, and disabled/failed updates have checked behavior. Source edits alone must no longer be mistaken for a newly packaged MCU build.
+
+### 5. Apply scoped updates, then validate hardware
+
+After the reconciled baseline builds, prioritize updater/calibration preservation, joystick/button behavior, LCD assets/UI and any desired control features as separate changes. Keep feature changes separate from toolchain migration so regressions can be attributed. Record memory and asset impact for each change.
+
+Verify the actual MCU marking/PCB revision and debug connection before selecting a programming procedure. Board access, MCU writes and power cycles require the user's physical-step confirmation. Hardware acceptance covers joystick calibration, buttons, display, battery/power behavior and the i.MX link; the completed SD-card flash does not qualify a new STM32 binary.
