@@ -270,3 +270,23 @@ path and continuation under the declared model. Exact decoded pixels, RGB565
 palette/tint/transparency and malformed-stream behavior are covered separately
 by the firmware's native asset/render fixtures. The LCD remains a passive
 memory sink; appearance and physical display behavior still require hardware.
+
+## Linear-calibration candidate regression, October 28, 2026
+
+The unchanged canonical 32 checks also passed for saved production DVT source
+`89fc1d44680cac36c506bba4032078d2fb500160`, BIN 190956 bytes, SHA-256
+`124cf1c3cde4715f2f458f9c621c3ae157dc5a761a6f1d0efa2b4fd09296bbf3`.
+See its [result](/home/jresp/solo/.integration/artoo-builds/renode-linear-89fc1d4-qualification-20261028/result.json)
+and [manifest](/home/jresp/solo/.integration/artoo-builds/renode-linear-89fc1d4-qualification-20261028/manifest.json).
+The same 26 UART cases consumed 636 bytes with 15 expected rejections and no
+overruns, drops or line errors. Actual Tamp decoding returned success, splash
+rendering returned, and final PC `0x080063ec` was in `main`; the render interval
+again contained 62 timer rollovers. Original/copied inputs, harness hashes and
+the protected build environment document were preserved.
+
+No new harness feature or parameter fixture was added for this run. It retains
+the erased parameter page used by the existing canonical checks. The specific
+linear-axis trim-zero fix is exercised by the actual production Inputs/StickAxis
+native fixture using the captured controller calibration; this Renode result
+is the additional startup/protocol/render regression gate for that exact image.
+This harness performed no hardware action.

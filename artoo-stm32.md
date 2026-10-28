@@ -7,7 +7,7 @@ No MCU programming or physical debugger connection has occurred.
 ## Current working build
 
 Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`,
-revision `6eddd3338da30a53f510fe07b0d40ceed7ac2264`. The recovered
+revision `89fc1d44680cac36c506bba4032078d2fb500160`. The recovered
 `/home/jresp/solo/apps/artoo-firmware` checkout remains preserved. Canonical
 upstream is `/home/jresp/Active_GH/OpenSolo`; `UPSTREAM.json` records its
 OpenSolo 4 lineage and owner patch. Local OpenSolo 5 branding and reliability
@@ -25,18 +25,24 @@ cd /home/jresp/Active_GH/artoo-firmware
 See [WSL_BUILD.md](/home/jresp/Active_GH/artoo-firmware/WSL_BUILD.md) for dependencies and workflow. The wrapper cleans only known ignored outputs before regenerating Tup's standalone script, so subsequent builds work too.
 
 The current standalone production DVT candidate is
-`5.0.0-dev+g6eddd3338da3`: **190,892 bytes**, **69,204 bytes** before the
+`5.0.0-dev+g89fc1d44680c`: **190,956 bytes**, **69,140 bytes** before the
 reserved parameter page, **6,840 bytes** of static RAM, 11 constructors and
 zero preinitializers. Its bounded heap ends below a minimum 4 KiB stack
 reservation. The largest compiler-reported individual frame is 288 bytes;
 this is not a complete call-chain/interrupt stack or physical high-water proof.
-[Final build receipt](/home/jresp/solo/.integration/artoo-builds/tamp-integration-20261028/production-dvt/verification.json)
+[Final build receipt](/home/jresp/solo/.integration/artoo-builds/linear-calibration-20261028/production-dvt/verification.json)
 binds the source, ELF/BIN hashes, native tests and exact board/profile arguments.
 All 800 generated images/glyphs render the exact baseline RGB565 pixels. Tamp
-compression saves 59,472 bytes of total firmware flash and adds 312 bytes of
+compression saved 59,472 bytes in its comparison build and adds 312 bytes of
 static workspace; palettes and descriptor sizes are unchanged. See the
 [Tamp implementation report](artoo-tamp-integration-20261028.md).
 Newlib syscall-stub warnings remain visible.
+
+Hardware preflight found a valid zero trim on the linear rate dial. The current
+firmware and SoloLink updater `46d677a` preserve that calibration; native tests
+and all 32 Renode checks passed. See [the calibration correction](artoo-linear-calibration-20261028.md).
+The new Linux image has booted with SSH access, but Wi-Fi repeatedly disconnects.
+No Artoo programming has started; the controller still runs `OpenSolo-4dev`.
 
 All four explicit build profiles pass: `production dvt`, `production bb03`,
 `factory dvt`, `factory bb03`. Production excludes destructive factory commands
