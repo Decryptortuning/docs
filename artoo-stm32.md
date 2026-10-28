@@ -148,3 +148,29 @@ See [Python compatibility review](python3-compatibility-20261028.md) for exact
 behavior, mocked regression coverage and source handoff. These changes have not
 been deployed or used to flash the STM32; the physical controller still runs
 `OpenSolo-4dev`.
+
+
+## Local OpenSolo 5 branding — October 28, 2026
+
+The local Artoo candidate at `60a2707305e671137ed11f2e406964a8e36cd2b0` now
+uses an **OPENSOLO 5** startup/shutdown logo, `5.0.0-dev` development version,
+and OpenSolo 5 support prompts. The upstream source lineage remains OpenSolo 4;
+this is not a claim of an upstream release or hardware qualification.
+
+The original 212 × 48 pixel canvas and shared RGB565 palette are retained.
+A complete native WSL firmware build passed, including the existing MAVLink
+CRC/unaligned-access regression. Decoding the compiled RLE asset produced an
+exact RGB565 match to the new PNG. The binary is 244,744 bytes, leaving 15,352
+bytes before the reserved parameter page. The embedded version is
+`5.0.0-dev+g60a2707305e6`. Pixel-accurate physical LCD appearance remains untested.
+
+Source artwork: `/home/jresp/Active_GH/artoo-firmware/resources/images/logo_startup/Solo_Logo.png`.
+Branding source notes: `/home/jresp/Active_GH/artoo-firmware/resources/BRANDING.md`.
+Local artifacts and verification: `/home/jresp/solo/.integration/artoo-builds/opensolo5-branding`.
+The searchable gallery at `/home/jresp/solo/.integration/artoo-builds/lcd-assets/gallery.html`
+reflects the new local artwork.
+
+No target changes, automatic-update enablement, flashing, pushing, or replacement
+of the accepted Yocto MCU payload were performed. The controller still runs
+`OpenSolo-4dev`. The separate Python updater hardening is described in
+[the compatibility report](python3-compatibility-20261028.md).
