@@ -44,6 +44,17 @@ and all 32 Renode checks passed. See [the calibration correction](artoo-linear-c
 The new Linux image has booted with SSH access, but Wi-Fi repeatedly disconnects.
 No Artoo programming has started; the controller still runs `OpenSolo-4dev`.
 
+SD inspection confirmed driver reload renamed `phy0` to `phy1` and then
+`phy2`; the fixed `iw phy0` startup command prevented reconnection, including
+the software-crypto rollback. Meta-3dr `0d8baa2` resolves the radio through
+`/sys/class/net/$IFACE/phy80211`. The card now has that fix, updater `46d677a`,
+and the complete `89fc1d4` manual firmware package. Software crypto
+(`nohwcrypt=1`, MSI retained) is a next-boot diagnostic, not an established fix
+for the original inactivity disconnects. Keys, credentials and calibration
+were preserved; both ext3 filesystems passed checks. The card changes are
+overlays on the verified Linux image; the new source pins have not yet been
+rebuilt into a replacement image. Evidence: `.integration/controller-card-inspection-20261028/prepared.json`.
+
 All four explicit build profiles pass: `production dvt`, `production bb03`,
 `factory dvt`, `factory bb03`. Production excludes destructive factory commands
 while retaining raw input/calibration diagnostics. Factory builds remain separate
