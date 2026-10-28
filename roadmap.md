@@ -30,6 +30,12 @@ Fix SoloLink's source-mutating installation behavior, then add a deliberate exte
 
 Acceptance: a local change demonstrably enters a development image; the checkout remains unchanged by recipe installation; switching profiles restores the pinned source selection.
 
+### Artoo STM32 build qualification
+
+Use the [Artoo research guide](artoo-stm32.md) to choose the firmware source baseline, prepare native Tup/ARM GCC/Python tooling, port asset/version generation and validate ELF/BIN outputs. The existing Yocto image packages the supplied v3.0.0 binary; the source checkout is not built by that recipe.
+
+Acceptance before packaging or programming: pinned tool/source identity, working resource and version generation, checked memory/glyph/protocol behavior and an explicit artifact handoff into Yocto. MCU hardware debugging/flashing remains a separate confirmed step.
+
 ### Package and recipe ownership
 
 Give configuration, init integration, UCM profiles and version metadata explicit owning recipes. Review broad `FILES` rules and package-owned rootfs postprocessing. Replace obsolete generic copies such as libusb/monotonic only after comparing and retaining required custom behavior. Correct license metadata and dormant fetcher/bootstrap issues as scoped changes.
