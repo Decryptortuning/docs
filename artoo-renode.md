@@ -206,3 +206,67 @@ arithmetic remains covered by the actual production native UBSan fixture;
 Renode supplies no ADC completion stream to drive that camera task. No new ADC,
 charger, LCD, radio or DMA model was introduced, and no physical targets were
 contacted or changed.
+
+## Tamp candidate and real render observation, October 28, 2026
+
+The saved Tamp production DVT candidate, source
+`6eddd3338da30a53f510fe07b0d40ceed7ac2264`, passed all previous 31 checks and a
+new compressed-render observation: **32 cases passed**. Its BIN is 190892 bytes,
+SHA-256 `c423a8c0793e2acec18b94e5eb7fd1f414b258a977008433110dd265b2f526c9`.
+Current evidence is the
+[Tamp result](/home/jresp/solo/.integration/artoo-builds/renode-tamp-6eddd33-qualification-r2-20261028/result.json)
+and [manifest](/home/jresp/solo/.integration/artoo-builds/renode-tamp-6eddd33-qualification-r2-20261028/manifest.json).
+Older candidate sections remain historical evidence.
+
+```bash
+candidate_dir=/home/jresp/solo/.integration/artoo-builds/tamp-integration-20261028/production-dvt
+python3 /home/jresp/Active_GH/OPenSolo_2/tests/renode/run_artoo.py \
+  --elf "$candidate_dir/artoo.elf" --bin "$candidate_dir/artoo.bin" \
+  --receipt "$candidate_dir/verification.json" \
+  --output /home/jresp/solo/.integration/artoo-builds/renode-tamp-new-run \
+  --negative-controls --uart-checks --tamp-observe
+```
+
+`--tamp-observe` adds a separate 1.25-second pin-reset/Running scenario. The
+firmware's normal no-TE fallback begins updating the UI after one software
+second; the existing boot/UART scenarios retain their original durations.
+No tearing-effect GPIO, task mask, asset data, register return value or firmware
+instruction is injected to trigger rendering.
+
+The observer derives production function addresses from the selected ELF and
+locates the renderer's direct branch-and-link to `AssetDecoder::decode` in
+disassembly. Its encoded instruction length identifies the actual return site,
+where R0 must contain boolean success. An unfamiliar compiled call layout is
+rejected for review. The return address is retained in
+[`tamp-observer.json`](/home/jresp/solo/.integration/artoo-builds/renode-tamp-6eddd33-qualification-r2-20261028/tamp-observer.json).
+
+The required and observed sequence was:
+
+1. Actual `UiSplash::init` and `Gfx::drawBitmapBytes` entry.
+2. Actual packed-format argument with Tamp codec 1, 2038 encoded bytes and
+   10176 expected pixels.
+3. Actual `tamp_decompressor_decompress_cb` stream entry.
+4. Actual `AssetDecoder::decode` return with R0 equal to 1.
+5. `UiSplash::update`, after synchronous splash rendering returned.
+6. Final PC `0x080063d4` back in the production `main` loop.
+
+The render run recorded 62 real SysTick coarse-time increments
+(1240000000 ns) over 1.25 simulated seconds, with reload 179999. Its 119
+peripheral/model warnings remain visible. UART regression again consumed all
+636 bytes with 15 expected rejections and zero overruns, drops or line errors.
+Python compilation and candidate/original/copy/harness hash checks passed;
+the protected `build-env.md` remained unchanged.
+
+The first Tamp attempt passed the existing 31 cases but stopped before CPU
+execution in the added scenario because Renode merged adjacent one-line
+triple-quoted hook commands. That
+[attempt is retained](/home/jresp/solo/.integration/artoo-builds/renode-tamp-6eddd33-qualification-20261028/result.json).
+Only the new hook scripts' multiline formatting and explicit monitor-command
+error reporting changed before the complete rerun. Firmware inputs and all
+assertions were preserved.
+
+This verifies successful execution of the real Cortex-M3 compressed-render
+path and continuation under the declared model. Exact decoded pixels, RGB565
+palette/tint/transparency and malformed-stream behavior are covered separately
+by the firmware's native asset/render fixtures. The LCD remains a passive
+memory sink; appearance and physical display behavior still require hardware.

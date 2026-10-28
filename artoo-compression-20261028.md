@@ -1,5 +1,7 @@
 # Artoo asset compression experiment — October 28, 2026
 
+This is the historical codec comparison. The subsequent [Tamp implementation](artoo-tamp-integration-20261028.md) records the integrated firmware and its qualification.
+
 **Tamp extended with a 256-byte window leads the measured comparison.**
 Selecting a format independently for each asset projects **59,800 bytes
 (58.4 KiB) of net flash savings**, including an allowance for stream metadata

@@ -7,7 +7,7 @@ No MCU programming or physical debugger connection has occurred.
 ## Current working build
 
 Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`,
-revision `66336f01c57de971a85c001aa627308871a3747f`. The recovered
+revision `6eddd3338da30a53f510fe07b0d40ceed7ac2264`. The recovered
 `/home/jresp/solo/apps/artoo-firmware` checkout remains preserved. Canonical
 upstream is `/home/jresp/Active_GH/OpenSolo`; `UPSTREAM.json` records its
 OpenSolo 4 lineage and owner patch. Local OpenSolo 5 branding and reliability
@@ -25,14 +25,17 @@ cd /home/jresp/Active_GH/artoo-firmware
 See [WSL_BUILD.md](/home/jresp/Active_GH/artoo-firmware/WSL_BUILD.md) for dependencies and workflow. The wrapper cleans only known ignored outputs before regenerating Tup's standalone script, so subsequent builds work too.
 
 The current standalone production DVT candidate is
-`5.0.0-dev+g66336f01c57d`: **250,364 bytes**, **9,732 bytes** before the
-reserved parameter page, **6,528 bytes** of static RAM, 11 constructors and
+`5.0.0-dev+g6eddd3338da3`: **190,892 bytes**, **69,204 bytes** before the
+reserved parameter page, **6,840 bytes** of static RAM, 11 constructors and
 zero preinitializers. Its bounded heap ends below a minimum 4 KiB stack
 reservation. The largest compiler-reported individual frame is 288 bytes;
 this is not a complete call-chain/interrupt stack or physical high-water proof.
-[Final build receipt](/home/jresp/solo/.integration/artoo-builds/modernization-20261028/wave4/final-66336f0/production-dvt/verification.json)
+[Final build receipt](/home/jresp/solo/.integration/artoo-builds/tamp-integration-20261028/production-dvt/verification.json)
 binds the source, ELF/BIN hashes, native tests and exact board/profile arguments.
-All 765 linked image/font/palette arrays match the original OpenSolo 5 artwork.
+All 800 generated images/glyphs render the exact baseline RGB565 pixels. Tamp
+compression saves 59,472 bytes of total firmware flash and adds 312 bytes of
+static workspace; palettes and descriptor sizes are unchanged. See the
+[Tamp implementation report](artoo-tamp-integration-20261028.md).
 Newlib syscall-stub warnings remain visible.
 
 All four explicit build profiles pass: `production dvt`, `production bb03`,
@@ -49,9 +52,11 @@ reset, poisoned-memory, constructor and task-loop checks; native sanitizer
 fixtures cover additional protocol, input, command and graphics behavior.
 
 The exact final candidate also passed **three Renode boot scenarios, two
-negative controls and 26 real UART receive regressions**. Those UART cases
+negative controls, 26 real UART receive regressions and a compressed splash
+render check**. The render check observes successful Tamp decoding followed by
+splash update and main-loop continuation. Those UART cases
 consumed 636 bytes with 15 expected rejections and no overruns, drops or line
-errors. [Final Renode evidence](/home/jresp/solo/.integration/artoo-builds/renode-final-66336f0-qualification-20261028/result.json)
+errors. [Final Renode evidence](/home/jresp/solo/.integration/artoo-builds/renode-tamp-6eddd33-qualification-r2-20261028/result.json)
 retains peripheral-model warnings and scope limits; physical UART/DMA, ADC,
 charging, flash and display behavior remain hardware acceptance work.
 
