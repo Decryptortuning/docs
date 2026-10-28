@@ -103,3 +103,12 @@ legacy interrupt mode. Credentials and radio timing settings remain unchanged.
 RWFS passed its check after clean unmount. Evidence and rollback paths are in
 `/home/jresp/solo/.integration/controller-lan/msi-test-20261028/result.json`.
 The MSI boot, DHCP and SSH checks remain pending.
+
+The MSI test boot now has verified DHCP and pinned-key SSH access at
+`192.168.2.207`; the workstation hostname alias resolves and connects as well.
+MSI is active on IRQ 295 and interrupt counters increment. Gateway and DNS are
+`192.168.2.1`, station mode is active, and Wi-Fi power save is off. Recurring
+beacon loss and reconnects still interrupt SSH, so stable LAN acceptance remains
+open. Signal improved to approximately -31 dBm; this confounds attributing the
+connectivity improvement solely to MSI. Live diagnostics and result are saved
+under `/home/jresp/solo/.integration/controller-lan/msi-boot-success-20261028`.

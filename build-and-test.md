@@ -150,3 +150,13 @@ key login remain unverified. RWFS again passed its check after clean unmount.
 The station-only boot still lost beacons after successful WPA negotiation. A
 card-local MSI interrupt diagnostic test is now installed; see
 [latest evidence](status-and-evidence.md). Wi-Fi/SSH access is still unverified.
+
+The MSI test boot obtained `192.168.2.207` through OpenWrt DHCP. Both direct-IP
+and `ssh opensolo-controller` logins succeeded with the pinned host key and
+dedicated client key. The live driver reports MSI enabled, IRQ 295 allocated,
+power save off, and the correct LAN gateway/DNS. Access is intermittent: beacon
+loss and locally generated reason-4 disconnects still occur, followed by
+reconnection. This is verified LAN/SSH access, not stable network acceptance.
+The received signal also improved between boots, so MSI alone is not established
+as the cause of the improvement. Evidence is under
+`/home/jresp/solo/.integration/controller-lan/msi-boot-success-20261028`.
