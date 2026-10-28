@@ -1,10 +1,31 @@
 # i.MX ↔ Artoo serial preflight — October 28, 2026
 
-Status: loader source fixes and ten offline regressions passed. Live application
-traffic and exclusive bridge ownership were observed, but the controller shut
-down before the new ROM preflight could run. ROM identity/geometry, repeated
-readback and return-to-application checks below are **pending**. No STM32 flash
-operation has been performed or authorized by this preflight tool.
+Status: **not ready to approve flashing**. The corrected loader is installed on
+Linux and all ten offline regressions passed. A live 100-request parameter test
+passed with no timeouts, identical 172-byte responses and a maximum 25.063 ms
+round trip. Its SHA256 `31fe40f57af93231272613617a8e6070c1083a5f80d424f05866f56b75ce0454`
+matches the saved factory-calibration record. Artoo remains `OpenSolo-4dev`.
+
+The first ROM preflight launch was followed by a Linux restart. Boot ID changed
+from `fd5b3819-0085-40fa-97c7-f85bf3531703` to
+`3c4f00b3-d4b8-474f-828c-4ae08cfca8d8`; neither the job result nor its new log
+survived. Therefore no ROM identity/readback result can be claimed. The bridge
+and Wi-Fi/SSH subsequently returned, and calibration still matches. No flash
+commands are available through the helper's command whitelist.
+
+Artoo's existing power initialization configures PC14 and briefly disables
+IMX6 power before starting normally. This is a candidate explanation, not a
+proven reset cause. The original helper's assumption that Linux survives all
+MCU resets is now unqualified. Do not rerun the old helper or proceed with the
+historical manual flash job. Clarification about physical power-button activity
+is pending; the exact reset phase must be isolated first.
+
+Integration `05c5636` prepares a revised **single-cycle** helper with durable
+boot-ID/phase receipts before runlevel changes, ROM entry, identity, readbacks,
+release and bridge restoration. It fsyncs the result and directory metadata
+before reset-sensitive steps. It passed syntax validation, but has not been
+installed or run. Evidence is in
+`/home/jresp/solo/.integration/artoo-serial-preflight-20261028/`.
 
 ## Observed connection
 
@@ -45,8 +66,10 @@ Ten offline tests passed, including erase frames, invalid-page rejection,
 timeout restoration after NACK, short identity reads, failed-reset cleanup and
 firmware verification failures. Source review and logs:
 `/home/jresp/solo/.integration/artoo-serial-preflight-20261028/`.
-These source fixes are not yet installed on the controller or rebuilt into an
-image. They must be installed and hash-checked before the live preflight.
+The loader fixes are installed and hash-checked on the controller as an overlay
+(SHA256 `d3a094529e9d250d919e2988e360c12febdb06a6311cb2d3bfcf99504337ddf4`).
+They are pinned for future image builds; no new full image build was needed for
+this standalone Python tool. The revised diagnostic helper itself is still local.
 
 ## Prepared non-flashing live test
 
@@ -57,7 +80,7 @@ detached so losing the SSH connection does not terminate cleanup. It:
 1. Requires standby runlevel 3 and the normal bridge as the sole UART owner.
 2. Reads the 172-byte parameter response twenty times and checks equality.
 3. Switches to runlevel 2 and checks that the UART has no remaining owner.
-4. Repeats three ROM-entry/read/release cycles. ROM command dispatch is restricted
+4. Qualifies one ROM-entry/read/release cycle before any repetition. ROM command dispatch is restricted
    to Get, GetVersion, GetID and ReadMemory; programming, erasing, Go and
    protection changes cannot be dispatched by the helper.
 5. Checks family ID `0x414`, 256 KiB geometry, stable MCU UID, plausible existing
@@ -67,7 +90,7 @@ detached so losing the SSH connection does not terminate cleanup. It:
    ID/version, and compares the application UID with the ROM UID.
 7. Restores runlevel 3 and checks the bridge and unchanged runtime parameters.
 
-The helper stores a durable result receipt after each cycle and attempts service
+The revised helper stores durable phase receipts before reset-sensitive steps and attempts service
 restoration on errors. ROM entry resets the MCU/LCD briefly even though no flash
 bytes are changed. It does not use the updater UI to suppress idle shutdown.
 
