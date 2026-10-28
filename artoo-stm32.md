@@ -174,3 +174,14 @@ No target changes, automatic-update enablement, flashing, pushing, or replacemen
 of the accepted Yocto MCU payload were performed. The controller still runs
 `OpenSolo-4dev`. The separate Python updater hardening is described in
 [the compatibility report](python3-compatibility-20261028.md).
+
+## Asset compression experiment — October 28, 2026
+
+An isolated comparison covered all 123 images and 677 generated font glyphs.
+Tamp extended with a 256-byte window gave the best measured size: approximately
+58.4 KiB projected net savings on linked assets after stream metadata and an
+ARM decoder/wrapper allowance. All tested streams passed bounded-chunk
+sanitizer checks; three Cortex-M3 emulation runs verified final RGB565 pixels
+for every asset. Compression is not integrated or flashed, and actual LCD
+timing remains unmeasured. See [the complete experiment](artoo-compression-20261028.md)
+for corpus identities, comparisons, limits and reproduction evidence.
