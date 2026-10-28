@@ -7,7 +7,9 @@ The workspace keeps application repositories, product metadata, board support, v
 | Location | Role |
 |---|---|
 | `/home/jresp/Active_GH/OPenSolo_2` | Integration Git repository ([Decryptortuning/OPenSolo_2](https://github.com/Decryptortuning/OPenSolo_2)), build wrappers, `workspace-lock.json`, tests and audit. |
-| `/home/jresp/solo/apps` | Recovered application Git checkouts. |
+| `/home/jresp/solo/apps` | Recovered application checkouts; the original Artoo copy is preserved here. |
+| `/home/jresp/Active_GH/artoo-firmware` | Primary rebased Artoo MCU firmware checkout and native WSL build. |
+| `/home/jresp/Active_GH/OpenSolo` | Canonical upstream clone for component-history extraction; original reference remains preserved. |
 | `/home/jresp/solo/workspace/layers/meta-3dr` | Product layer: distro policy, applications, networking, image generation and boot/update scripts. |
 | `/home/jresp/solo/workspace/layers/meta-solo-bsp` | BSP layer: machines, kernel device trees/configuration and U-Boot board support. |
 | `/home/jresp/solo/workspace/layers/meta-solo` | Preserved historical layer; omitted from active `BBLAYERS`. |
@@ -57,3 +59,5 @@ Edit real source repositories. Files under `build-*/tmp/work` are generated task
 After an intentional layer commit, update its lock entry and regenerate both targets as described in [Build and validation](build-and-test.md). Keep the preserved dirty state of historical docs/scripts separate from new commits; do not silently include those edits.
 
 New Linux, web, Android and kernel repositories belong under `/home/jresp/Active_GH` in WSL `Ubuntu-24.04`, using WSL Git and native Linux tooling. Repositories requiring native Windows tools use `C:\Users\JResp\Documents\Active_GH`. An explicitly requested destination takes precedence. The restored `/home/jresp/solo` workspace remains in its existing native location.
+
+The Artoo project inventory entry uses an absolute checkout path because its primary development checkout is outside the restored workspace. Other relative paths remain workspace-relative. This inventory change does not alter the prebuilt Artoo payload in the baseline Yocto image.

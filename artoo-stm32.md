@@ -1,6 +1,25 @@
 # Artoo STM32 controller firmware
 
-Research date: October 28, 2026. This identifies the firmware sources and a candidate native WSL build setup. No STM32 firmware build, install, debugger connection or MCU flash was performed in this research.
+Research and build recovery: October 28, 2026. The original research is retained below; the subsequent native build is now working. No MCU programming or debugger connection was performed.
+
+## Current working build
+
+Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`, revision `c91f2941c694693ea404ed3993fbb943060dcc23`. The recovered `/home/jresp/solo/apps/artoo-firmware` checkout remains preserved. Canonical upstream is cloned at `/home/jresp/Active_GH/OpenSolo`; `UPSTREAM.json` records the monorepo/component split and replayed owner patch. Existing remote main/PORT histories were not rewritten or published.
+
+Tup 0.7.11, ARM GCC 13.2/binutils/newlib and GDB multiarch are installed. A project Python 3.12 environment uses pinned Pillow 10.2.0. The build repairs Pillow/font metrics, explicit version generation, packed checksum accesses and intentional LCD fallthrough while retaining compiler warnings as errors. A UBSan host regression verifies an independent heartbeat wire CRC and unaligned checksum operations.
+
+Run:
+
+```bash
+cd /home/jresp/Active_GH/artoo-firmware
+./scripts/build-wsl.sh
+```
+
+See [WSL_BUILD.md](/home/jresp/Active_GH/artoo-firmware/WSL_BUILD.md) for dependencies and workflow. The wrapper cleans only known ignored outputs before regenerating Tup's standalone script, so subsequent builds work too.
+
+The accepted software-build result is `4.0.0-dev+gc91f2941c694`: BIN 244,144 bytes, flash headroom 15,952 bytes, 11 constructor entries and 43,492 bytes above static RAM data. Static headroom does not establish runtime stack/heap safety. [Verification and artifact hashes](/home/jresp/solo/.integration/artoo-builds/rebase-20261028/verification.json), ELF/MAP/HEX/BIN and logs are retained in the same directory. Newlib syscall-stub linker warnings remain visible.
+
+The existing Yocto prebuilt v3.0.0 binary and opt-in MCU update policy are unchanged. The uploader remains in its recovered location; its rebase/update work is a separate next phase. The research/plan sections below describe the starting findings and remaining hardware/packaging work, not an unexecuted firmware-build setup.
 
 ## Role and hardware evidence
 
