@@ -1,5 +1,12 @@
 # OpenSolo project status and validation evidence
 
+Current October 28 Wi-Fi/Artoo acceptance: [permanent PCIe kernel fix and two
+warm reboot results](controller-wifi-pci-20261028.md), plus [local bench/normal
+Artoo qualification](artoo-bench-idle-20261028.md). The kernel is installed;
+STM32 firmware remains unflashed. Earlier image receipts below retain their
+original scope and identity.
+
+
 As of October 28, 2026, both controller and drone images build and pass image/initramfs validation on this WSL host. The controller also passes 26 maintenance fault tests and ARM userspace/utility checks. The drone media pipeline and current physical board behavior remain unverified. See the [WSL relocation verification](wsl-relocation-20261028.md) for the latest build scope and source fix.
 
 ## Current validation coverage

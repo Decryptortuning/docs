@@ -7,7 +7,7 @@ No MCU programming or physical debugger connection has occurred.
 ## Current working build
 
 Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`,
-revision `89fc1d44680cac36c506bba4032078d2fb500160`. The recovered
+revision `48034572145e9e62dff881141277564e1ed1d3a6`. The recovered
 `/home/jresp/solo/apps/artoo-firmware` checkout remains preserved. Canonical
 upstream is `/home/jresp/Active_GH/OpenSolo`; `UPSTREAM.json` records its
 OpenSolo 4 lineage and owner patch. Local OpenSolo 5 branding and reliability
@@ -24,7 +24,7 @@ cd /home/jresp/Active_GH/artoo-firmware
 
 See [WSL_BUILD.md](/home/jresp/Active_GH/artoo-firmware/WSL_BUILD.md) for dependencies and workflow. The wrapper cleans only known ignored outputs before regenerating Tup's standalone script, so subsequent builds work too.
 
-The current standalone production DVT candidate is
+The preserved calibration-correction production DVT candidate is
 `5.0.0-dev+g89fc1d44680c`: **190,956 bytes**, **69,140 bytes** before the
 reserved parameter page, **6,840 bytes** of static RAM, 11 constructors and
 zero preinitializers. Its bounded heap ends below a minimum 4 KiB stack
@@ -41,22 +41,22 @@ Newlib syscall-stub warnings remain visible.
 Hardware preflight found a valid zero trim on the linear rate dial. The current
 firmware and SoloLink updater `46d677a` preserve that calibration; native tests
 and all 32 Renode checks passed. See [the calibration correction](artoo-linear-calibration-20261028.md).
-The new Linux image has booted with SSH access, but Wi-Fi repeatedly disconnects.
-No Artoo programming has started; the controller still runs `OpenSolo-4dev`.
+The controller still runs `OpenSolo-4dev`; no MCU programming has started.
+The current local candidate adds an explicit bench-only idle-countdown option.
+All six board/profile builds and native regressions passed; normal and bench
+DVT each passed all 32 canonical Renode checks. Saved manifests identify
+`5.0.0-dev+g48034572145e` and
+`5.0.0-dev+g48034572145e-bench-noidle`. Neither was selected for flashing or
+promoted into the Yocto image. See [bench qualification](artoo-bench-idle-20261028.md).
 
-SD inspection confirmed driver reload renamed `phy0` to `phy1` and then
-`phy2`; the fixed `iw phy0` startup command prevented reconnection, including
-the software-crypto rollback. Meta-3dr `0d8baa2` resolves the radio through
-`/sys/class/net/$IFACE/phy80211`. The card now has that fix, updater `46d677a`,
-and the complete `89fc1d4` manual firmware package. Software crypto
-(`nohwcrypt=1`, MSI retained) is a next-boot diagnostic, not an established fix
-for the original inactivity disconnects. Keys, credentials and calibration
-were preserved; both ext3 filesystems passed checks. The card changes are
-overlays on the verified Linux image; the new source pins have not yet been
-rebuilt into a replacement image. Evidence: `.integration/controller-card-inspection-20261028/prepared.json`.
+The Wi-Fi fault was traced to the controller BSP's PCIe MSI/legacy-interrupt
+configuration. The permanent controller-only kernel fix and actual deployment
+state are recorded in [Wi-Fi kernel qualification](controller-wifi-pci-20261028.md).
+The separate radio-name fix resolves the PHY dynamically through sysfs.
+Keys, credentials, calibration, and the existing manual Artoo package are preserved.
 
-All four explicit build profiles pass: `production dvt`, `production bb03`,
-`factory dvt`, `factory bb03`. Production excludes destructive factory commands
+The four production/factory build profiles pass: `production dvt`, `production bb03`,
+`factory dvt`, `factory bb03`; `bench dvt` and `bench bb03` also pass. Production excludes destructive factory commands
 while retaining raw input/calibration diagnostics. Factory builds remain separate
 artifacts. DVT is hardware ID 3 and the default; BB03 is ID 2, with a digital
 LCD backlight instead of DVT PWM. A compiled ID does not identify a physical PCB.
