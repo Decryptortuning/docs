@@ -263,16 +263,14 @@ for corpus identities, comparisons, limits and reproduction evidence.
 
 ## Bench idle-shutdown override — October 28, 2026
 
-The camera paddle is disconnected on the open controller, so the physical
-A/Pause/paddle override cannot be used. The existing updater UI also inhibits
-`IdleTimeout`; a display-only UDP byte `0` sent through the STM32 bridge on
-localhost port 5019 enters it. The owner confirmed “Updating system” on the
-LCD. This does not perform firmware programming. The temporary display state
-continues while Wi-Fi reconnects and preserves normal battery and power-button
-shutdown paths.
+The camera paddle is disconnected on the open controller, so the existing
+A/Pause/paddle idle override cannot be used. A temporary updater-display hold
+was tried through the normal STM32 bridge. It successfully prevented idle
+shutdown, but source review found that `PowerManager::canShutDown()` also
+rejects normal software shutdown while the updater UI is active. Earlier
+claims that ordinary shutdown protection was unchanged were incorrect.
 
-The opt-in helper [artoo-bench-keepawake](/home/jresp/Active_GH/OPenSolo_2/scripts/artoo-bench-keepawake)
-is installed at `/etc/init.d/opensolo-bench-keepawake`, with a runlevel-3
-`S99opensolo-bench-keepawake` link and `/etc/opensolo-bench-keepawake` marker.
-Remove the marker and fully power-cycle the controller to restore ordinary
-idle shutdown. The default Yocto image does not enable the bench hold.
+The owner dismissed the maintenance display with A, returning to the normal
+screen. The marker, runlevel link and boot helper were removed. No firmware
+programming was involved. Do not use the updater UI as a standing bench
+keep-awake feature; implement an idle-only development setting for that purpose.
