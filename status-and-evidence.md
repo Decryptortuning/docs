@@ -77,3 +77,12 @@ The archived drone SD image embeds a different rootfs from its archived deployed
 ## Subsequent LAN management setup
 
 The development card now has a local LAN Wi-Fi/SSH profile; see [build and validation](build-and-test.md#local-controller-lan-and-ssh-profile). During configuration, normal journal replay and clean unmount resolved the earlier RWFS check differences; a read-only e2fsck then passed. The earlier first-boot journal observation is preserved above as historical evidence. Actual LAN association and SSH login remain pending a boot check.
+
+The first LAN boot reached “Waiting for Solo” and started sshd on port 22, but
+OpenWrt recorded only brief association, with no WPA completion or DHCP lease.
+The prepared PSK matches the router. AP auto-channel startup overlapped station
+connection attempts; a channel conflict is suspected, not yet established. At
+the owner’s request, the card now disables the SoloLink AP while retaining LAN
+station mode and controller services, and enables WPA syslog for the next boot.
+Selected logs and results: `/home/jresp/solo/.integration/controller-lan/station-only-20261028`.
+No full card backup was taken. Station-only boot and SSH verification are pending.

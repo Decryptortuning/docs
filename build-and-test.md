@@ -110,10 +110,11 @@ Build logs are saved under `/home/jresp/solo/.integration/logs`, alongside `.sou
 
 ## Local controller LAN and SSH profile
 
-The current development card has station mode enabled alongside its SoloLink AP.
-The existing startup scripts associate `wlan0` first and align the AP channel to
-the station. LAN DHCP uses hostname `opensolo-controller`; the system hostname
-remains `3dr_controller` because existing role-selection scripts depend on it.
+The current development card has station mode enabled and its SoloLink Wi-Fi AP
+disabled, at the owner’s request, to isolate LAN bring-up on the shared radio.
+Controller application services remain enabled. LAN DHCP uses hostname
+`opensolo-controller`; the system hostname remains `3dr_controller` because
+existing role-selection scripts depend on it.
 
 OpenWrt supplied the WLAN configuration through the existing read-only router SSH
 alias. Credentials live only in private workstation staging files and the card's
@@ -136,3 +137,12 @@ Writing the settings mounted RWFS normally, replayed its pending journal, then
 cleanly unmounted it. A subsequent read-only e2fsck passed without the previous
 allocation-count differences. LAN association and actual SSH access still require
 a boot/connection verification; installing the profile alone does not prove them.
+
+The initial combined AP/station boot briefly associated with OpenWrt but did not
+complete WPA authentication or obtain a DHCP lease. The card logs show AP startup
+falling back to automatic channel selection while station association was still
+coming up. This suggests a shared-radio startup conflict, pending verification.
+The next profile disables `ApEnable`, retains `StationEnable`, and enables
+wpa_supplicant syslog output through a card-local network hook override. SSH
+started and listened on port 22 in the failed LAN boot; network reachability and
+key login remain unverified. RWFS again passed its check after clean unmount.
