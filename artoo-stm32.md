@@ -1,10 +1,17 @@
 # Artoo STM32 controller firmware
 
-Research and build recovery: October 28, 2026. The original research is retained below; the subsequent native build is now working. No MCU programming or debugger connection was performed.
+Updated October 28, 2026. Native builds and software regression checks work in
+WSL. The original recovery research is retained below as a historical snapshot.
+No MCU programming or physical debugger connection has occurred.
 
 ## Current working build
 
-Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`, revision `c91f2941c694693ea404ed3993fbb943060dcc23`. The recovered `/home/jresp/solo/apps/artoo-firmware` checkout remains preserved. Canonical upstream is cloned at `/home/jresp/Active_GH/OpenSolo`; `UPSTREAM.json` records the monorepo/component split and replayed owner patch. Existing remote main/PORT histories were not rewritten or published.
+Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`,
+revision `66336f01c57de971a85c001aa627308871a3747f`. The recovered
+`/home/jresp/solo/apps/artoo-firmware` checkout remains preserved. Canonical
+upstream is `/home/jresp/Active_GH/OpenSolo`; `UPSTREAM.json` records its
+OpenSolo 4 lineage and owner patch. Local OpenSolo 5 branding and reliability
+changes are not an upstream release. No remote history was rewritten or pushed.
 
 Tup 0.7.11, ARM GCC 13.2/binutils/newlib and GDB multiarch are installed. A project Python 3.12 environment uses pinned Pillow 10.2.0. The build repairs Pillow/font metrics, explicit version generation, packed checksum accesses and intentional LCD fallthrough while retaining compiler warnings as errors. A UBSan host regression verifies an independent heartbeat wire CRC and unaligned checksum operations.
 
@@ -12,14 +19,51 @@ Run:
 
 ```bash
 cd /home/jresp/Active_GH/artoo-firmware
-./scripts/build-wsl.sh
+./scripts/build-wsl.sh production dvt
 ```
 
 See [WSL_BUILD.md](/home/jresp/Active_GH/artoo-firmware/WSL_BUILD.md) for dependencies and workflow. The wrapper cleans only known ignored outputs before regenerating Tup's standalone script, so subsequent builds work too.
 
-The accepted software-build result is `4.0.0-dev+gc91f2941c694`: BIN 244,144 bytes, flash headroom 15,952 bytes, 11 constructor entries and 43,492 bytes above static RAM data. Static headroom does not establish runtime stack/heap safety. [Verification and artifact hashes](/home/jresp/solo/.integration/artoo-builds/rebase-20261028/verification.json), ELF/MAP/HEX/BIN and logs are retained in the same directory. Newlib syscall-stub linker warnings remain visible.
+The current standalone production DVT candidate is
+`5.0.0-dev+g66336f01c57d`: **250,364 bytes**, **9,732 bytes** before the
+reserved parameter page, **6,528 bytes** of static RAM, 11 constructors and
+zero preinitializers. Its bounded heap ends below a minimum 4 KiB stack
+reservation. The largest compiler-reported individual frame is 288 bytes;
+this is not a complete call-chain/interrupt stack or physical high-water proof.
+[Final build receipt](/home/jresp/solo/.integration/artoo-builds/modernization-20261028/wave4/final-66336f0/production-dvt/verification.json)
+binds the source, ELF/BIN hashes, native tests and exact board/profile arguments.
+All 765 linked image/font/palette arrays match the original OpenSolo 5 artwork.
+Newlib syscall-stub warnings remain visible.
 
-The existing Yocto prebuilt v3.0.0 binary and opt-in MCU update policy are unchanged. The uploader remains in its recovered location; its rebase/update work is a separate next phase. The research/plan sections below describe the starting findings and remaining hardware/packaging work, not an unexecuted firmware-build setup.
+All four explicit build profiles pass: `production dvt`, `production bb03`,
+`factory dvt`, `factory bb03`. Production excludes destructive factory commands
+while retaining raw input/calibration diagnostics. Factory builds remain separate
+artifacts. DVT is hardware ID 3 and the default; BB03 is ID 2, with a digital
+LCD backlight instead of DVT PWM. A compiled ID does not identify a physical PCB.
+
+The [audit resolution ledger](artoo-modernization-resolution-20261028.md)
+tracks transport, persistence, input validation, clock/ISR/DMA ownership,
+factory isolation, renderer bounds and runtime helper fixes, plus remaining
+hardware/design gates. [Renode software tests](artoo-renode.md) provide finite
+reset, poisoned-memory, constructor and task-loop checks; native sanitizer
+fixtures cover additional protocol, input, command and graphics behavior.
+
+The exact final candidate also passed **three Renode boot scenarios, two
+negative controls and 26 real UART receive regressions**. Those UART cases
+consumed 636 bytes with 15 expected rejections and no overruns, drops or line
+errors. [Final Renode evidence](/home/jresp/solo/.integration/artoo-builds/renode-final-66336f0-qualification-20261028/result.json)
+retains peripheral-model warnings and scope limits; physical UART/DMA, ADC,
+charging, flash and display behavior remain hardware acceptance work.
+
+This candidate has not replaced the separately pinned Yocto MCU artifact.
+The earlier branding-only payload is packaged under `/firmware/candidates/`,
+outside the boot updater's automatic discovery pattern. The current Linux
+rebuild remains set aside for final integration/validation. The Python updater
+and loader were hardened separately; see [the Python report](python3-compatibility-20261028.md).
+No update was enabled or flashed. Earlier
+[recovery artifacts](/home/jresp/solo/.integration/artoo-builds/rebase-20261028/verification.json)
+and [branding artifacts](/home/jresp/solo/.integration/artoo-builds/opensolo5-branding)
+are preserved independently.
 
 ## Role and hardware evidence
 
@@ -33,6 +77,11 @@ The LCD code uses an ILI9341 parallel/FSMC driver with Tianma initialization dat
 
 ## Repositories and workspace tracking
 
+**Historical recovery snapshot:** repository revisions, package inventories,
+identified updater defects and planning steps in the following research sections
+describe the initial recovery state. Use the current build section above and
+linked resolution/Python/Renode guides for implemented changes and acceptance.
+
 | Repository | Role and checked state |
 |---|---|
 | [Decryptortuning/artoo-firmware, PORT](https://github.com/Decryptortuning/artoo-firmware/tree/PORT) | Owner's working MCU port at `/home/jresp/solo/apps/artoo-firmware`, commit `31901c3500eee205534fade61e5c19b0e3622e19`. Public standalone import, not a GitHub-linked fork. Default `main` is `5788cb060e56748659c9bc0f5627018fb4b70ae0`. |
@@ -45,7 +94,7 @@ The LCD code uses an ILI9341 parallel/FSMC driver with Tianma initialization dat
 
 The owner's initial firmware import matches old OpenSolo `3.0.0` core code; the PORT commit updates 14 Python utilities. Later canonical Artoo changes, including the January 2020 SmartRTL long-home-button action, are absent from that baseline. Compare and deliberately choose the source baseline before carrying changes forward. Historical provenance remains in [SOURCE](/home/jresp/solo/apps/artoo-firmware/SOURCE:1).
 
-## Existing build pipeline and image integration
+## Historical build pipeline and image integration at recovery
 
 The firmware uses [Tup](/home/jresp/solo/apps/artoo-firmware/Tupfile:75). It generates resources, compiles C++11 with `arm-none-eabi` GCC, links custom startup/vector/register code and emits ELF, HEX and BIN outputs. It uses newlib/nano, libm, libgcc and libnosys; production disables exceptions, RTTI and semihosting. This is separate from the Linux cross compiler used by Yocto.
 
@@ -55,7 +104,7 @@ The packaged binary is 241,857 bytes, contains `v3.0.0`, and has SHA-256 `700247
 
 The Linux image invokes `checkArtooAndUpdate.py` during startup, but firmware writes are opt-in in the owner's port. The loader operates on the controller's internal UART and GPIOs; it is not a generic PC USB flasher. Its software still needs review before enabling updates: subprocess output is bytes but [strip uses a string](/home/jresp/solo/apps/sololink/STM32Loader/checkArtooAndUpdate.py:213), and the candidate is [moved to loaded even when updates are disabled](/home/jresp/solo/apps/sololink/STM32Loader/checkArtooAndUpdate.py:323).
 
-## Recommended build qualification setup
+## Original build qualification proposal
 
 Keep the existing Tup pipeline and use native Ubuntu-24.04 WSL tooling. The following are available package candidates on this host, not a qualified firmware build result:
 
@@ -73,7 +122,7 @@ For an initial isolated build, use `tup generate build-once.sh` and then run the
 
 Historical documentation used Ubuntu 14.04 Vagrant, Python 2 and unpinned PPA/pip tooling. It does not establish an exact reproducible legacy compiler baseline. Modern native tools are the recommended qualification candidate. The build enables `-Werror`, so new compiler diagnostics, runtime/link differences and code size need qualification. Retain the existing pipeline while establishing that baseline.
 
-## Work required before a trusted new binary
+## Original recovery work list
 
 1. Choose the source baseline and explicitly account for missing canonical firmware changes.
 2. Make Python interpreter/dependency selection reproducible. Tup still invokes literal `python`; activating a project virtual environment can supply it without a global Python 2 alias.
@@ -137,7 +186,11 @@ Acceptance: the packaged bytes/version match the accepted standalone artifact, a
 
 After the reconciled baseline builds, prioritize updater/calibration preservation, joystick/button behavior, LCD assets/UI and any desired control features as separate changes. Keep feature changes separate from toolchain migration so regressions can be attributed. Record memory and asset impact for each change.
 
-Verify the actual MCU marking/PCB revision and debug connection before selecting a programming procedure. Board access, MCU writes and power cycles require the user's physical-step confirmation. Hardware acceptance covers joystick calibration, buttons, display, battery/power behavior and the i.MX link; the completed SD-card flash does not qualify a new STM32 binary.
+Verify the actual MCU marking/PCB revision and debug connection before selecting
+a programming procedure. Follow the user's authorized hardware scope and current
+workspace instructions. MCU writes remain outside the present local-only work.
+Hardware acceptance covers joystick calibration, buttons, display, battery/power
+behavior and the i.MX link; an SD-card build does not qualify a new STM32 binary.
 
 ## Python updater hardening — October 28, 2026
 

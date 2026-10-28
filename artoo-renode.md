@@ -100,7 +100,7 @@ peripheral warnings are evidence of coverage limits, not hardware success.
 
 This complements the production-code native protocol, command, stick, button,
 clock and IRQ fixtures. Small follow-ups with good software value are a valid
-parameter-page fixture plus CRC-corruption fallback, finite captured UART input
+valid/invalid stored-parameter fixtures, finite captured UART input
 that exercises actual receive dispatch, and a focused pending-task/heartbeat
 assertion at the Running main-loop boundary. Each needs its own explicit input
 contract and reviewed assertions. Avoid expanding into analog, charger, radio,
@@ -138,3 +138,71 @@ using `RemoveHook` instead of the address-only `RemoveHooksAt`, is preserved in
 [`renode-wave3-qualification-20261028`](/home/jresp/solo/.integration/artoo-builds/renode-wave3-qualification-20261028/result.json).
 Qualification was rerun after that harness-only correction; firmware inputs
 were unchanged. Later firmware candidates require their own run and receipt.
+
+## Final candidate and bounded UART expansion, October 28, 2026
+
+The final saved production DVT candidate, source
+`66336f01c57de971a85c001aa627308871a3747f`, passed the same three boot scenarios
+and two negative controls, plus 26 additional UART receive cases. The exact
+BIN SHA-256 is
+`d028b55d4822af7738196a14a44489c593794abcf7d0563ecdcc4b8ae0f215fb`.
+Use the [final result](/home/jresp/solo/.integration/artoo-builds/renode-final-66336f0-qualification-20261028/result.json)
+and [manifest](/home/jresp/solo/.integration/artoo-builds/renode-final-66336f0-qualification-20261028/manifest.json)
+for current candidate evidence; the wave3 section above is historical.
+
+```bash
+candidate_dir=/home/jresp/solo/.integration/artoo-builds/modernization-20261028/wave4/final-66336f0/production-dvt
+python3 /home/jresp/Active_GH/OPenSolo_2/tests/renode/run_artoo.py \
+  --elf "$candidate_dir/artoo.elf" --bin "$candidate_dir/artoo.bin" \
+  --receipt "$candidate_dir/verification.json" \
+  --output /home/jresp/solo/.integration/artoo-builds/renode-final-new-run \
+  --negative-controls --uart-checks
+```
+
+The optional UART scenario boots a fresh machine through the same actual
+pin-reset/Running path, then feeds wire bytes using the existing STM32 UART
+model's `WriteChar` input. Its effective USART1 reference is configured to
+72 MHz, matching the firmware's APB2 setup and 115200 baud divider. Each case
+runs only long enough for its paced bytes plus a small foreground-dispatch
+margin. Nothing directly calls a firmware function, writes pending-task masks,
+or changes firmware variables. The UART expansion added approximately 0.159
+simulated seconds after the 0.5-second boot interval.
+
+`gdb-multiarch` resolves actual member addresses, array capacities and message
+IDs from the selected ELF's DWARF; the test contains no historical member
+offsets. These addresses and the exact input vectors are retained in
+[`uart-layout.json`](/home/jresp/solo/.integration/artoo-builds/renode-final-66336f0-qualification-20261028/uart-layout.json)
+and [`uart-vectors.json`](/home/jresp/solo/.integration/artoo-builds/renode-final-66336f0-qualification-20261028/uart-vectors.json).
+The receipt must explicitly contain `factory_tests: false` before these cases
+can run. A separate negative preflight check confirmed that a factory-enabled
+receipt is rejected with exit 2 before Renode starts.
+
+| Cases | Actual software observations |
+| --- | --- |
+| Malformed escape, oversized frame, missing/extra SetRawIo bytes, recovery | Exact real RX byte-count deltas, expected rejection-count deltas, unchanged raw-I/O flag on rejected frames, then valid raw-I/O off/on updates. |
+| Direct SysInfo and Linux single-space query, invalid SysInfo query, outgoing-only and unknown IDs | Both supported query envelopes accepted, invalid forms rejected by actual host message validation. |
+| Production OutputTest, GpioTest, SelfTest magic and TestEvent requests | Each structurally valid factory request increments the rejection counter; production SetRawIo remains usable. |
+| Full 64-byte and oversized shot label | The valid label reaches the actual 20-character UI field with its trailing NUL; the oversized label is rejected without replacing it. |
+| Maximum pairing identity, missing terminator, hidden suffix, oversized identity and matching result | Actual stored identity accepts 31 characters plus NUL, invalid text preserves the previous identity, the oversized envelope is rejected, and a valid result clears the identity. Consumer-level text rejection correctly does not invent an envelope rejection count. |
+| Zero, valid 2/4-second and reversed sweep configuration | Invalid inputs increment rejection counts and preserve stored values; valid input updates the real parameter fields. |
+
+All 26 cases passed: 636 UART bytes were consumed through the real ISR/ring/task
+path, with 15 expected envelope rejections, zero UART overruns, zero ring drops
+and zero line errors. The boot timer check again observed 24 coarse-time
+increments (480000000 ns) with reload 179999. Final UART PC was `0x08006134`
+in `main`. All input copies and originals preserved their hashes, frozen
+harness hashes matched, and Python compilation passed.
+
+The full UART log retains 1407 warnings, dominated by 636 requests each to
+disabled DMA channels 4 and 5 from the vendor UART model. These warnings do not
+invalidate the independently counted IRQ receive path. They also make the
+limits explicit: this pass does not qualify UART TX/DMA response bytes. SysInfo
+coverage here establishes request admission, not decoded response contents.
+
+The expansion intentionally stopped after these easy software checks. GPIO
+button-edge stimulus, valid/invalid stored-parameter fixtures, heap execution,
+and analog-driven camera/filter work were not added. The widened moving-average
+arithmetic remains covered by the actual production native UBSan fixture;
+Renode supplies no ADC completion stream to drive that camera task. No new ADC,
+charger, LCD, radio or DMA model was introduced, and no physical targets were
+contacted or changed.
