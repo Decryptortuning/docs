@@ -138,3 +138,13 @@ Acceptance: the packaged bytes/version match the accepted standalone artifact, a
 After the reconciled baseline builds, prioritize updater/calibration preservation, joystick/button behavior, LCD assets/UI and any desired control features as separate changes. Keep feature changes separate from toolchain migration so regressions can be attributed. Record memory and asset impact for each change.
 
 Verify the actual MCU marking/PCB revision and debug connection before selecting a programming procedure. Board access, MCU writes and power cycles require the user's physical-step confirmation. Hardware acceptance covers joystick calibration, buttons, display, battery/power behavior and the i.MX link; the completed SD-card flash does not qualify a new STM32 binary.
+
+## Python updater hardening — October 28, 2026
+
+The locally committed updater/loader now fail on subprocess/verification failures,
+retain skipped/failed candidates, verify calibration and the running version, and
+never automatically escalate ordinary retries to readout-unprotect or mass erase.
+See [Python compatibility review](python3-compatibility-20261028.md) for exact
+behavior, mocked regression coverage and source handoff. These changes have not
+been deployed or used to flash the STM32; the physical controller still runs
+`OpenSolo-4dev`.

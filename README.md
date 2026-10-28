@@ -12,6 +12,7 @@ Last updated: October 28, 2026. Both image targets were rebuilt and validated af
 | [Workspace and source ownership](workspace-and-sources.md) | Repository locations, layer responsibilities, source pins and where changes belong. |
 | [Build and validation](build-and-test.md) | Repeatable WSL build commands, CPU settings, input verification and checks. |
 | [Board support](board-support.md) | Machine definitions, hardware format migration and unresolved controller/drone BSP work. |
+| [Python 3 compatibility](python3-compatibility-20261028.md) | Reviewed source scope, updater safety fixes, Python 3.12 regression coverage and deployment limits. |
 | [Artoo STM32 firmware](artoo-stm32.md) | MCU responsibilities, firmware/loader repos, Tup tooling and remaining build blockers. |
 | [Boot and recovery](boot-and-recovery.md) | Disk layout, provisioning, updates, reset behavior and recovery limits. |
 | [Project roadmap](roadmap.md) | Next software work, hardware milestones and acceptance criteria. |
