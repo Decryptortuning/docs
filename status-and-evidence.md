@@ -86,3 +86,20 @@ the owner’s request, the card now disables the SoloLink AP while retaining LAN
 station mode and controller services, and enables WPA syslog for the next boot.
 Selected logs and results: `/home/jresp/solo/.integration/controller-lan/station-only-20261028`.
 No full card backup was taken. Station-only boot and SSH verification are pending.
+
+The station-only boot completed WPA key negotiation on the controller and router,
+then repeatedly reported beacon loss and locally initiated reason-4 disconnects.
+Subsequent `WRONG_KEY` warnings followed beacon loss; they do not establish a
+credential mismatch. No DHCP lease or SSH session was obtained. Removing the AP
+therefore did not resolve the failure. Wi-Fi power save is disabled by default
+in the current ath9k driver; no speculative power-save change was installed.
+
+The development card now has a temporary `options ath9k use_msi=1` override to
+test PCI interrupt delivery, plus a bounded interface-up diagnostic hook writing
+interrupt counts, MSI vector allocation, station statistics and link/IP state to
+`/log/wifi-bringup.log`. The kernel and driver support this option. This is a
+diagnostic hypothesis, not a proven fix; both files can be removed to restore
+legacy interrupt mode. Credentials and radio timing settings remain unchanged.
+RWFS passed its check after clean unmount. Evidence and rollback paths are in
+`/home/jresp/solo/.integration/controller-lan/msi-test-20261028/result.json`.
+The MSI boot, DHCP and SSH checks remain pending.

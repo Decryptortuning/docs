@@ -146,3 +146,7 @@ The next profile disables `ApEnable`, retains `StationEnable`, and enables
 wpa_supplicant syslog output through a card-local network hook override. SSH
 started and listened on port 22 in the failed LAN boot; network reachability and
 key login remain unverified. RWFS again passed its check after clean unmount.
+
+The station-only boot still lost beacons after successful WPA negotiation. A
+card-local MSI interrupt diagnostic test is now installed; see
+[latest evidence](status-and-evidence.md). Wi-Fi/SSH access is still unverified.
