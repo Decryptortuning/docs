@@ -107,3 +107,32 @@ On a new Ubuntu WSL host, install dependencies with `sudo bash scripts/install-h
 | Different hashes after regeneration | `/VERSION` includes the wall-clock build date. `/etc/timestamp` is normalized separately. Input pinning alone does not establish bit-for-bit reproducibility. |
 
 Build logs are saved under `/home/jresp/solo/.integration/logs`, alongside `.sources.json` and native-tar hash records. A failed input guard should be resolved deliberately; silently editing generated configuration defeats that verification.
+
+## Local controller LAN and SSH profile
+
+The current development card has station mode enabled alongside its SoloLink AP.
+The existing startup scripts associate `wlan0` first and align the AP channel to
+the station. LAN DHCP uses hostname `opensolo-controller`; the system hostname
+remains `3dr_controller` because existing role-selection scripts depend on it.
+
+OpenWrt supplied the WLAN configuration through the existing read-only router SSH
+alias. Credentials live only in private workstation staging files and the card's
+RWFS overlay. They are not embedded in the Yocto recipe, source lock or Git docs.
+The controller config checksum sidecars were updated so configinit preserves the
+changes on reboot. This profile is specific to this development card.
+
+The workstation SSH alias is:
+
+```bash
+ssh opensolo-controller
+```
+
+It uses a dedicated Ed25519 key, public-key root login and a separately pinned
+controller host key. Password/keyboard-interactive SSH authentication is disabled
+by the card's local drop-in. Existing authorized public keys are preserved.
+Private staging/evidence is under `/home/jresp/solo/.integration/controller-lan`.
+
+Writing the settings mounted RWFS normally, replayed its pending journal, then
+cleanly unmounted it. A subsequent read-only e2fsck passed without the previous
+allocation-count differences. LAN association and actual SSH access still require
+a boot/connection verification; installing the profile alone does not prove them.

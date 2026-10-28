@@ -73,3 +73,7 @@ ARM probes run userspace utilities with QEMU and a host shell harness; they do n
 The recovery behavior requires the new baseline's GOLDEN initramfs. An ordinary update leaves GOLDEN in place, so older cards need a deliberate migration or fresh flash before relying on it. FAT progress records and changed single-copy raw U-Boot writes retain power-loss risks. See [Boot and recovery](boot-and-recovery.md).
 
 The archived drone SD image embeds a different rootfs from its archived deployed squashfs. The new [October 28 drone snapshot](/home/jresp/solo/recovery/wsl-relocation-20261028/drone/verification.json) passes exact-producer validation; use it when assessing new artifacts. Saved older images/logs remain historical evidence. Successful new image construction does not close the drone capture/reset/routing work.
+
+## Subsequent LAN management setup
+
+The development card now has a local LAN Wi-Fi/SSH profile; see [build and validation](build-and-test.md#local-controller-lan-and-ssh-profile). During configuration, normal journal replay and clean unmount resolved the earlier RWFS check differences; a read-only e2fsck then passed. The earlier first-boot journal observation is preserved above as historical evidence. Actual LAN association and SSH login remain pending a boot check.
