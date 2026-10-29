@@ -10,6 +10,7 @@ Last updated: October 28, 2026. Both image targets were rebuilt and validated af
 |---|---|
 | [Project status and evidence](status-and-evidence.md) | Current controller baseline, artifact identity, validation coverage and remaining limits. |
 | [Wrynose migration plan](yocto-wrynose-migration-plan.md) | Concrete kas workspace, ordered implementation waves, acceptance gates and rollback for the NXP Wrynose port. |
+| [Scarthgap package maintenance audit](scarthgap-package-update-audit-20261028.md) | Complete historical image inventory, verified maintenance candidates and next-round package update priorities without moving to Yocto 6. |
 | [Yocto modernization audit](yocto-modernization-audit-20261028.md) | Astra review of current layers/BSP, source organization, release options and a gated Wrynose migration plan. |
 | [Workspace and source ownership](workspace-and-sources.md) | Repository locations, layer responsibilities, source pins and where changes belong. |
 | [Build and validation](build-and-test.md) | Repeatable WSL build commands, CPU settings, input verification and checks. |
