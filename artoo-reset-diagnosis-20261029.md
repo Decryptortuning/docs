@@ -1,5 +1,7 @@
 # Artoo reset diagnosis — October 29
 
+**Later live test:** [temporary legacy power-hold test](artoo-power-hold-test-20261029.md) passes application reset and ROM identity/geometry/repeated readback/release with both GPIO19/21 driven high. Linux stays up; calibration matches and pins are released afterward. Permanent BSP/updater correction remains pending; no flashing occurred.
+
 **New source finding:** [legacy power-control comparison](artoo-legacy-power-comparison-20261029.md) identifies omitted controller U-Boot GPIO19/21 output-high initialization. Reset/BOOT mapping matches the old BSP. This is the leading source-backed explanation, pending live register/electrical confirmation; no restoration or flashing has been performed.
 
 **Later automatic-path test:** [one-shot boot preflight](artoo-boot-preflight-20261029.md) also restarted Linux during loader initialization. Its recovery skip guard worked, the original hook was restored and firmware/calibration remain unchanged; no flashing occurred.

@@ -1,5 +1,7 @@
 # Artoo reset and legacy power-control comparison — October 29
 
+**Later live test:** [temporary legacy power-hold test](artoo-power-hold-test-20261029.md) passes application reset and ROM identity/geometry/repeated readback/release with both GPIO19/21 driven high. Linux stays up; calibration matches and pins are released afterward. Permanent BSP/updater correction remains pending; no flashing occurred.
+
 The comparison found a concrete BSP migration omission: **legacy controller U-Boot drives GPIO1_IO19 and GPIO1_IO21 high; the modern board code does not.** Legacy source explicitly describes these as the STM32 and i.MX6 POWER-ON pins. Both modern device trees retain their GPIO mux entries, but those entries do not configure output direction or assert a level. This is the leading source-backed explanation for losing the i.MX when the STM32 resets. It is a confirmed source difference, not yet an electrically proven root cause.
 
 This was a read-only comparison. No GPIO export/write, reset, service change, reboot, ROM operation or flashing occurred. No product source was changed or rebuilt. SSH could not resolve opensolo-controller.lan, so this pass added no fresh live register sample. The previous one-shot updater hook remains restored and no retry was armed. **Flashing remains blocked.**

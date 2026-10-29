@@ -1,5 +1,7 @@
 # Automatic-update boot-time Artoo preflight — October 29
 
+**Later live test:** [temporary legacy power-hold test](artoo-power-hold-test-20261029.md) passes application reset and ROM identity/geometry/repeated readback/release with both GPIO19/21 driven high. Linux stays up; calibration matches and pins are released afterward. Permanent BSP/updater correction remains pending; no flashing occurred.
+
 The explicitly authorized one-shot probe ran at the real S60updateArtoo stage. Version lookup and calibration reads passed; the installed loader opened the UART. Linux then restarted during initChip before a recorded ROM sync ACK. The recovery boot skipped the consumed probe. **No MCU erase, write, protection change or flashing occurred.** The original updater hook has been restored and no retry is scheduled.
 
 This answers the boot-context question: the early-boot test did not avoid the reset seen in the running-system tests. It does not establish the electrical cause, prove actual ROM entry, or qualify automatic programming.
