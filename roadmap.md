@@ -103,3 +103,7 @@ The approved controller SD now contains be98 with fresh188MiB GOLDEN/LATEST and 
 ## Chrony physical follow-up
 
 Be98 now boots and has scoped network/bridge/logging/console evidence, but its clock client fails on an absent install utility. Corrected local graphfaf and stronger actual ARM utility/lifecycle checks pass in all four profiles. The [startup report](chrony-boot-fix-20261029.md) records the prepared SSH-only patch and pending Linux reboot authorization. Do not describe R03 as physically accepted until that deployment and real network time synchronization are observed.
+
+## Authorized clock correction completed
+
+The init-only be98 overlay correction is installed, and one warm Linux reboot passes early NTP synchronization before bridge startup, chronyd privilege/owner checks, advancing saved time, strict SSH/Wi-Fi and retained MCU/logging/console behavior. The full faf image remains a separate locally qualified artifact. Next hardware acceptance is the scoped work still listed in the [live result](chrony-boot-fix-20261029.md#authorized-live-correction-and-warm-reboot--pass), especially actual flight/GPS handoff and loaded pairing/video. No automatic promotion of watchdog, memory or MCU changes is implied.
