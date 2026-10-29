@@ -1,5 +1,7 @@
 # Artoo STM32 controller firmware
 
+**Latest physical readiness:** [October29 serial/flash review](artoo-flash-readiness-20261029.md) passes the live application UART and candidate/tool/calibration checks. Reset/ROM entry remains unqualified; no STM32 flash has occurred. Battery-only power is not established as the cause of the prior restart.
+
 Updated October 28, 2026. Native builds and software regression checks work in
 WSL. The original recovery research is retained below as a historical snapshot.
 No MCU programming or physical debugger connection has occurred.
