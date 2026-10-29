@@ -1,76 +1,93 @@
 # OpenSolo project roadmap
 
-The controller's pinned build, DHCP packaging and maintenance failure handling are complete at the current software-test level. Continue with configuration recovery and source/package ownership while arranging a separate controller hardware acceptance session. Drone media completion remains its own larger BSP milestone.
+Status date: October 28, 2026. The current implementation wave modernizes the
+owned Scarthgap metadata and workflow while retaining NXP Linux 6.6.52 and the
+existing boot/storage contract. Yocto 6 is deferred. License work is deferred
+by the user and is not part of this wave's acceptance scope.
 
-Status date: October 28, 2026. Acceptance items below are pending unless explicitly marked complete.
+Source implementation, offline validation and physical qualification are
+separate milestones. The [forthcoming refactor report](scarthgap-refactor-20261028.md)
+will record the combined pins and build/test outcomes; this roadmap does not
+assert success for builds still running.
 
-## Completed foundation
+## Implemented source foundation
 
-| Milestone | Evidence |
+| Area | Current source ownership and behavior |
 |---|---|
-| Preserve the recovered project | Original archives and `/home/jresp/solo/recovery/baseline-20261008` retain histories, patches, configs and old artifacts. |
-| Pin and guard build inputs | Ten project repositories, seventeen vendor repositories, eight recipe pins and generated-config checks. |
-| Restore layer responsibilities | Product distro in `meta-3dr`, BSP in `meta-solo-bsp`, dependencies declared and `meta-solo` inactive. |
-| Restore controller DHCP and image ownership | Verified machine-scoped snippet, `IMGDEPLOYDIR` outputs and exact rootfs producer selection. |
-| Rebuild and inspect both image targets | Controller rootfs/image regeneration and new drone image pass producer/update/initramfs validation; October 28 snapshots preserved. |
-| Improve maintenance recovery | Recorded provisioning/resets, checked update copies/hashes/unmounts and bounded verified raw writes; 26 fault tests and ARM utility probes passed. |
-| Consolidate project documentation | Central status, workspace, build, BSP, recovery and roadmap guides in this repository. |
+| Workspace inputs | Integration owns pinned source selection, bootstrap/export recovery, generated configuration and input checks. Immutable artifacts have explicit identities rather than reliance on an old working directory alone. |
+| Layer responsibilities | `meta-solo-bsp` owns common SoC/tune, machines, kernel/U-Boot and board files. `meta-3dr` owns distro, images, packagegroups, configuration and maintenance. Historical `meta-solo` is inactive. |
+| Package composition | Board packagegroups compose the images; tracked configuration/UCM/init inputs have recipes. Image-level version identity remains explicit. Required package and QA results belong in the refactor report. |
+| Development/release profiles | Both use immutable selected sources and key-only access. Release has separate output directories and omits explicit pip/nano/vim development packages. Receipts and actual rootfs VERSION bind profile, graph identity and epoch. This development profile is not an externalsrc workflow. |
+| Boot payloads and determinism | Require bundled kernel, matching DTB and machine U-Boot; guard both slot loads; generate the environment from compiled sources. Selected epoch, stable FAT/MBR metadata, deterministic update tar/gzip and payload receipts replace wall-clock packaging inputs. Independent output comparison remains a qualification gate. |
+| Access and transfer | Both roles package key-only SSH without embedded device keys. Controller log transfer uses the constrained sololog/rrsync receiver; drone's existing inittab owns one sender lifecycle. Pairing/admin authorization is explicit per-device provisioning. A clean-overlay cutover is required; old overlay keys/policy are not revoked merely by building a new squashfs. |
+| Artoo handoff | Yocto stages the selected immutable candidate and manifest under `/firmware/candidates`, outside the automatic updater's `/firmware/artoo_*.bin` search. Native firmware and software-model evidence remain distinct from device programming authority. |
+| Recovery checks | Existing partition/update failure handling is retained, with both-role fault scenarios and ARM userspace/utility checks available. Do not reinterpret earlier successful tests as results for newly changed sources. |
 
-## Controller software before hardware
+## Offline acceptance of the combined candidate
 
-### Configuration initialization and upgrade
+After related components are frozen, pin and review the complete producer and
+consumer contract before tests/builds. Record provider/append closure, effective
+kernel fragments, module release/vermagic/CRC alignment and actual board DTBs.
+Run image/initramfs checks against the selected development or release build,
+never the other profile's kernel or rootfs. Check compiled environment failure
+branches, exact packaged hashes, deterministic metadata, staged Artoo isolation,
+access package composition and effective target sshd policy.
 
-Create tests against temporary root/overlay fixtures for missing configuration, existing valid settings, interrupted generation, migration from older values and invalid input. Verify `configinit` selects the intended templates and preserves user settings according to an explicit policy. Cover hostapd, wpa_supplicant, SoloLink and related startup ownership.
+The source mirror/export gate must demonstrate recovery of every selected input
+and the selected firmware artifacts. Compare independently regenerated images
+before claiming byte reproducibility. Rootfs configuration tests should cover
+missing templates, valid existing settings, interrupted generation and invalid
+input without using a live controller filesystem.
 
-Acceptance: repeatable tests show first-run initialization and retries produce usable configuration, valid existing settings survive upgrades, and invalid configuration produces a diagnosable failure. No real serial device or controller filesystem is used by these tests.
-
-### Explicit development source profile
-
-Fix SoloLink's source-mutating installation behavior, then add a deliberate externalsrc/devtool workflow alongside the pinned baseline. Show effective `S`, `SRCREV` and task/source selection for a local edit, and show that returning to the baseline selects the recorded fetched revision.
-
-Acceptance: a local change demonstrably enters a development image; the checkout remains unchanged by recipe installation; switching profiles restores the pinned source selection.
-
-### Artoo STM32 build qualification
-
-Use the [Artoo research guide](artoo-stm32.md) to choose the firmware source baseline, prepare native Tup/ARM GCC/Python tooling, port asset/version generation and validate ELF/BIN outputs. The existing Yocto image packages the supplied v3.0.0 binary; the source checkout is not built by that recipe.
-
-Acceptance before packaging or programming: pinned tool/source identity, working resource and version generation, checked memory/glyph/protocol behavior and an explicit artifact handoff into Yocto. MCU hardware debugging/flashing remains a separate confirmed step.
-
-### Package and recipe ownership
-
-Give configuration, init integration, UCM profiles and version metadata explicit owning recipes. Review broad `FILES` rules and package-owned rootfs postprocessing. Replace obsolete generic copies such as libusb/monotonic only after comparing and retaining required custom behavior. Correct license metadata and dormant fetcher/bootstrap issues as scoped changes.
-
-Acceptance: packaging ownership and input signatures are clear, relevant QA passes, and controller image/DHCP/maintenance validation remains green after each change.
-
-### Board support preparation
-
-Reconcile controller early GPIO sequencing and physical reset behavior with schematic/board-revision information; consolidate U-Boot environment ownership. Preserve observed direction/level/timing requirements when selecting DTS consumers, regulators or retained early board code.
-
-Acceptance before hardware: reviewed source/board mappings, effective configurations and new image validation. Electrical sequencing and button behavior require the hardware session below.
+An optional future externalsrc/devtool workflow must show effective source/task
+selection, avoid mutating application checkouts during installation and restore
+the pinned fetched source cleanly. It must not silently replace either current
+profile's immutable source contract.
 
 ## Controller hardware acceptance
 
-The selected controller card was flashed and readback-verified on October 28; its first controller boot remains pending. Start from the [verified baseline](status-and-evidence.md#verified-controller-baseline). Each physical action needs the user's confirmation; identify and confirm the exact storage/serial device before accessing it or writing an image.
+The physical card currently has the older rootfs plus the qualified nomsi
+kernel. It is not the newly refactored image. MCU reset readiness is on hold;
+source packaging or an offline test does not lift that hold. Preserve the
+[recorded baseline and evidence](status-and-evidence.md) and use the authorized
+hardware scope when a session is resumed. Identify the actual storage/serial
+device before destructive writes; no blanket per-step confirmation workflow is
+introduced here.
 
-1. Resolve host-to-controller UART transmission and capture an uninterrupted current boot log.
-2. Verify ROM/U-Boot device mapping, detected RAM and kernel command line against the image being tested.
-3. Observe first provisioning, then a second boot with LATEST/RWFS/LOG present and expected filesystem labels/payloads.
-4. Verify configuration initialization, controller AP operation, DHCP leases, expected Solo/controller addresses and pairing.
-5. Exercise STM32/Artoo communication, relevant HDMI/audio/USB interfaces and planned GPIO/reset behavior.
-6. Plan update/reset interruption tests on disposable media, retaining a known recovery image and the selected recovery procedure.
+1. Capture versioned boot identity, command line, detected RAM and device mapping.
+2. Verify first provisioning, the next boot's GOLDEN/LATEST/RWFS/LOG layout and
+   exact slot payloads on authorized spare media.
+3. Exercise configuration initialization, PCIe Wi-Fi, DHCP, pairing and sustained
+   controller operation with the selected candidate.
+4. Address the early GPIO and physical factory-reset gaps in
+   [board support](board-support.md), preserving known electrical sequencing.
+5. Resume MCU reset/communication investigation only within its separately
+   established scope. Do not program Artoo merely because a candidate is staged.
+6. Exercise update/reset interruptions on disposable media with recovery evidence
+   retained. A login prompt alone does not complete board acceptance.
 
-Acceptance: versioned image identity, serial logs and observations demonstrate these behaviors. A login prompt or emulated userspace success alone does not close this milestone.
+## Drone functional completion
 
-## Drone completion
+The source refactor selects a coherent media-controller dependency graph and
+corrects reset polarity for the pinned adv7604 implementation. It does not port
+the legacy GStreamer/capture consumers or establish electrical capture behavior.
+Complete graph/input/timing/format ownership and the userspace port described in
+[board support](board-support.md#drone-media-pipeline), then qualify capture,
+encoding and restart behavior together. Inspect effective kernel configuration
+and DT bindings before hardware tests.
 
-The October 28 drone image now builds and passes payload/initramfs validation after the KMS packaging fix. Complete the driver/configuration/graph/input/reset/bus-width work in [Board support](board-support.md#drone-media-pipeline), then rebuild and validate the changed image. Inspect effective kernel options and schema diagnostics before hardware capture testing.
+Physical DRAM remains unqualified: compare fitted parts and DCD geometry with
+U-Boot detection and Linux's handed-off memory range. Retained static sizes are
+not evidence of capacity. Qualify flight-controller communication, pairing and
+accessory requirements separately from controller results.
 
-Acceptance: a coherent ADV7610-to-capture pipeline produces the intended formats and encoded video, with verified reset/routing behavior and restart handling. Regenerated SD/update payloads match their exact producers; archived mismatched drone artifacts are not reused as the acceptance image.
+## Release and recovery decisions
 
-## Release and recovery design
+Define GOLDEN migration, recovery after Linux starts, writable-overlay rollback
+and the policy for replacing the sole raw U-Boot copy. FAT durability and that
+single bootloader copy remain power-loss limitations. New default environments
+also need an explicit policy for devices retaining saved raw environments.
 
-Define GOLDEN migration, post-Linux boot failure recovery, writable-overlay rollback and changed raw bootloader update policy. FAT record durability and the single raw U-Boot copy remain explicit power-loss limitations.
-
-Remove wall-clock rootfs metadata where reproducibility is intended, then compare equivalent clean-build outputs. Run release source-resolution, packaging/license, effective kernel, device-tree schema, image/update and board checks. Decide a separate release security policy for the current `debug-tweaks` and update-authentication behavior before claiming a production release.
-
-Acceptance: documented support/migration boundaries, repeatable build evidence and hardware/recovery observations meet the selected release policy. Current software results are a bring-up baseline.
+Retain vulnerability/build evidence and resolve findings according to the owned
+release policy. A locally built bring-up image is not a production qualification.
+License review remains deferred for the user's later pre-publication work.

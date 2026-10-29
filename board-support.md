@@ -1,6 +1,13 @@
 # OpenSolo board support and porting work
 
-Both target machines inherit the NXP i.MX6Solo SABRE SD baseline and supply Solo-specific kernel trees and U-Boot defconfigs. This is a substantial bring-up port; successful compilation still needs to be connected to the board's electrical behavior and userspace configuration.
+The current source candidate stays on NXP Scarthgap and Linux 6.6.52. Both Solo
+machines now use the owned `solo-imx6-common.inc`, requiring NXP's `imx-base.inc`
+and Cortex-A9 tune directly. They no longer inherit the complete SABRE board.
+The source refactor preserves SoC overrides/providers and enumerates Solo USB,
+PCIe Wi-Fi, audio and display features without SABRE SDIO/Bluetooth/touchscreen
+or OP-TEE identity. Build and hardware qualification are separate gates; see the
+[forthcoming refactor report](scarthgap-refactor-20261028.md) for the combined
+candidate and results as they become available.
 
 ## Active definitions
 
@@ -13,53 +20,91 @@ Paths below are relative to `/home/jresp/solo/workspace/layers/meta-solo-bsp`.
 | U-Boot defconfig | `recipes-bsp/u-boot/files/configs/imx6_controller_defconfig` | Same directory, `imx6_drone_defconfig` |
 | U-Boot device tree | `recipes-bsp/u-boot/files/arch/arm/dts/imx6solo-controller.dts` | Same directory, `imx6solo-drone.dts` |
 
-Shared U-Boot board C/DCD files are under `recipes-bsp/u-boot/files/board/3dr/3dr_hdtc`; compiled environment defaults are in `recipes-bsp/u-boot/files/include/configs/3dr_hdtc.h`. Kernel feature fragments are under `recipes-kernel/linux/linux-imx/files`, including media, Wi-Fi, serial, RFKILL, netfilter, squashfs and USB gadget settings.
+Shared U-Boot board C/DCD files remain under
+`recipes-bsp/u-boot/files/board/3dr/3dr_hdtc`. The authoritative slot commands
+are in `files/include/configs/3dr_hdtc.h`; board defconfigs supply bootcmd and
+identity. Poky's generated `u-boot-initial-env` supplies the installed
+`/etc/u-boot/boot.env`. Handwritten duplicate environment files were removed.
+The normal boot path uses compiled defaults or a saved raw environment; it does
+not need to import that installed file. Existing saved environments can override
+new defaults and require an explicit migration decision.
 
-Both machines request `uImage` with bundled `3dr-initramfs`, use the `imx-solo` override, and remove OP-TEE for the current SD boot flow. The product distro selects SysV init. Product images and maintenance scripts live in `meta-3dr`.
+Both slots now require their own successful kernel and DTB loads before bootm.
+LATEST failure permits a fresh GOLDEN attempt; neither path boots stale RAM or
+omits the DTB. Image source requires the bundled-initramfs kernel, exact board
+DTB and machine U-Boot for FAT, update archive and raw bootloader placement.
+MBR, uImage, GOLDEN/LATEST, squashfs, ext3 RWFS/LOG, raw environment offset
+0xC0000/size 0x2000 and the 64 MiB bootm allowance are preserved.
 
-## Formats crossed by the port
+The kernel append is now `linux-imx_6.6.bbappend`. Fragments still use NXP's
+`DELTA_KERNEL_DEFCONFIG` merge after defconfig selection. Both boards use
+`KERNEL_LOCALVERSION=-lts-next` for external-module alignment; actual release,
+vermagic and symbol CRC checks remain acceptance requirements. Historical DTS
+are retained under `reference/legacy-dts`, outside active recipe inputs.
+Product distro, images and maintenance scripts belong to `meta-3dr`.
 
-| Area | Earlier representation | Current integration requirement |
-|---|---|---|
-| Linux board hardware | Linux 3.10 Freescale board trees/platform drivers | Linux 6.6 bindings, pin functions, GPIO descriptors, regulators and explicit peripheral relationships. |
-| Video input | Legacy Freescale capture plus ADV7610 integration | A compatible receiver, IPU/CSI bridge, media endpoint graph and userspace routing/format owner. |
-| U-Boot | Board C callbacks and CONFIG macros | Driver-model devices, Kconfig/defconfigs, board DTS and CFG macros; preserve direction/level/timing behavior deliberately. |
-| Yocto metadata | Underscore overrides and copied recipes | Colon overrides, scoped appends, effective task/configuration verification and staged image ownership. |
+## Controller and shared acceptance limits
 
-A pad listed in DTS establishes muxing only to the extent its consumer uses it. It does not automatically reproduce a legacy C callback that configured direction, output level, timing or reset-button polling. Likewise, a kernel fragment's requested symbol is not proof that it exists or survives dependencies in the effective configuration.
+The controller's scoped `pci=nomsi` and `CONFIG_CMDLINE_EXTEND` policy is
+preserved. The physical card currently combines the older rootfs with the
+qualified nomsi kernel; it is not the new refactor image. The MCU reset-readiness
+work remains on hold. No successful new build or hardware result is asserted
+by these source changes.
 
-## Controller and shared board work
+| Item | Current assessment and remaining gate |
+|---|---|
+| DDR and boot mapping | Preserve DCD programming, U-Boot mmc1 and Linux mmcblk0 aliases. Confirm the actual boot-device identity and detected banks for each board. |
+| Early GPIO sequencing | Modern early board code omits controller legacy GPIO1_IO19/21 high outputs and GPIO2_IO14/13 inputs. Establish schematic/revision, STM32 BOOT/RESET, power and pull states before choosing a new owner. A DTS mux entry alone does not establish direction, output level or timing. |
+| Physical factory reset | Legacy three-second active-low polling is absent: controller GPIO3_IO24 and drone GPIO4_IO05. Button behavior and the factory-reset request path require deliberate implementation and hardware verification. |
+| Console and MCU | UART1 console observations do not prove safe MCU reset sequencing or ROM-loader readiness. Preserve the reset-readiness hold and existing hardware evidence. |
+| Wi-Fi and DHCP | Retain controller PCIe ath9k and packaged DHCP policy. Validate current candidate leases, addresses, pairing and sustained operation independently of older logs. |
+| RAM/CMA | Header default is 512 MiB; drone DTS retains a historical 1 GiB placeholder. Neither establishes fitted capacity. Preserve `imx_ddr_size()` and explicit OF_LIBFDT memory-bank fixup. Assert DCD geometry, detected banks and Linux handed-off memory agree; check boot payload ranges and media/CMA needs against those banks. |
 
-| Item | Current assessment | Required follow-up |
-|---|---|---|
-| DDR and boot mapping | Audit found preserved DCD programming and consistent ROM/USDHC3 to U-Boot mmc1 mapping; Linux aliases separately expose the boot disk as mmcblk0. | Confirm detected RAM and boot-device identity on the verified image. |
-| Kernel loading | The recovered controller entered Linux with the 64 MiB bootm allowance. | Check actual current boot log; preserve the raw bootloader/environment boundary. |
-| Console | J2 was identified as UART1 RX/TX/GND; the final recovered session reached login but could not send commands from the host. | Isolate adapter/wiring/transmit behavior with the confirmed hardware procedure. |
-| Wi-Fi and DHCP | Earlier logs showed ath9k/AP setup. Current image installs controller-only DHCP policy and passes DNSMasq syntax. | Verify real leases, expected addresses and pairing on the current image. |
-| Early GPIO sequencing | Modern `board_early_init_f` omits the controller's old GPIO1_IO19/21 high outputs and GPIO2_IO14/13 inputs. | Check schematic/board revision, STM32 BOOT/RESET, power and pull states before choosing a modern owner. |
-| Physical factory reset | Legacy three-second active-low polling is absent; original inputs were controller GPIO3_IO24 and drone GPIO4_IO05. | Restore button behavior deliberately and verify the kernel factory-reset request end to end. |
-| Environment definitions | Installed `boot.env` files are not imported by the recorded boot path; active defaults come from C strings. | Choose one authoritative representation and verify generated behavior. |
-| RAM and CMA | Saved logs report 512 MiB RAM; source DTS descriptions used 1 GiB and the saved kernel reserved 320 MiB CMA. | Correct descriptions and size CMA for the selected media workload; this is not proof of a current memory overrun. |
-
-The pinned NXP kernel retains the controller's Freescale framebuffer/HDMI path. Numerical GPIO helpers carry migration debt, but the audited driver/alias setup does not establish that every legacy GPIO number is wrong.
+The controller retains the NXP framebuffer/HDMI stack. Numerical GPIO helpers
+remain migration work, but their existence does not prove every legacy GPIO
+number is wrong.
 
 ## Drone media pipeline
 
-The recovered effective kernel combines `MXC_IPU`/legacy `VIDEO_MXC_CAPTURE` with the upstream ADV7604 driver used for ADV7610. The requested upstream media bridge depends on `IMX_IPUV3_CORE`, which was disabled. These pieces do not form a complete compatible capture pipeline merely because the receiver node and endpoint graph exist.
+The source candidate selects one media-controller path:
+ADV7610/adv7604 -> video-mux/MMIO mux -> IPUv3 CSI -> capture. Its drone-only
+fragment enables staging, VIDEO_DEV/subdev, IPUv3 and mux prerequisites and
+removes nonexistent symbol requests. In this NXP tree VIDEO_IMX_MEDIA builds
+the i.MX6 capture components; VIDEO_IMX_CAPTURE gates i.MX8 components. The
+competing legacy MXC IPU/capture stack and its legacy capture DT node are disabled
+for drone. Effective configuration and module/DTS validation must still prove
+that the requested graph survives dependency resolution.
 
-Resolve the pipeline as one change with clear driver and userspace ownership:
+The reset GPIO now uses GPIO_ACTIVE_HIGH because the pinned adv7604 driver
+writes descriptor logical 0 then 1 for a physical low reset pulse. The previous
+ACTIVE_LOW mapping held physical reset asserted at the end. This source-derived
+correction is not a measured HDMI probe/capture result.
 
-1. Select a compatible IPU/CSI bridge and effective kernel configuration. Avoid blindly enabling two competing IPU implementations.
-2. Resolve the pinned CSI bridge's `get_mbus_config` requirement against the receiver driver's missing operation.
-3. Correct reset assertion/deassertion semantics. The DTS uses `GPIO_ACTIVE_LOW`, while the pinned driver ends its logical reset sequence at 1, which drives that physical signal low under descriptor polarity.
-4. Select the HDMI input and establish ownership for links, timing, pad formats and ADV7610 output programming. The recorded node omits `default-input`; the EDID helper supplies EDID/queries timings but does not complete input/routing setup.
-5. Decide the pixel bus and console assignment together. Current bring-up uses eight CSI data lines and UART1 on CSI0_DAT10/11; the old 1080p path used a sixteen-bit BT.1120 group and disabled UART1.
-6. Verify capture, encoding and restart behavior on the drone with the chosen configuration.
+Remaining functional gates:
 
-UART5's legacy KEY_COL1/KEY_ROW1 pin group is also absent from the modern drone tree. Establish its intended accessory use before treating it as a required runtime failure; the audit found no current application reference to `ttymxc4`.
+1. Resolve the CSI bridge's `get_mbus_config` expectations against the receiver
+   implementation and establish HDMI input, EDID, timing, link and pad-format
+   ownership. The EDID helper alone does not configure the complete graph.
+2. Port the actual userspace consumers together. `vidlaunch.cpp` still invokes
+   `mxc_v4l2_capture`, opens `/dev/video0`, and uses
+   `mfw_v4lsrc`/`mfw_ipucsc`/`vpuenc`; `hdmiout.c` uses `vpudec`/`mfw_isink`.
+   Those legacy assumptions are not made compatible by enabling the modern
+   kernel graph. This remains a distinct userspace functional-port gap.
+3. Qualify eight-bit CSI/BT.656 wiring and UART1 on CSI0_DAT10/11. The earlier
+   1080p path used sixteen-bit BT.1120 and disabled UART1; current source does
+   not certify that mode.
+4. Verify capture, encoding, restart, flight-controller link and pairing on
+   the actual drone after offline acceptance.
 
-## Audit context and acceptance
+UART5's legacy KEY_COL1/KEY_ROW1 pin group is also absent. Establish accessory
+requirements before treating that as a current application failure; the earlier
+source audit found no application reference to `ttymxc4`.
 
-Detailed source/effective-config findings are in the [original board support audit](/home/jresp/Active_GH/OPenSolo_2/OpenSolo-board-support-audit.md). Its evidence directory is local to this restored machine. The audit's DHCP, image staging, release source selection and provisioning/update findings have since received software fixes, recorded in [Project status](status-and-evidence.md) and [Decisions and build history](decisions-and-history.md).
+## Evidence boundaries
 
-Further BSP work needs effective configuration inspection, device-tree schema checks against the pinned bindings, rebuilt image validation and confirmed board observations. Archived logs remain useful diagnostics; their successful boot or earlier reset symptom is not a result for the current baseline.
+The [original board support audit](/home/jresp/Active_GH/OPenSolo_2/OpenSolo-board-support-audit.md)
+retains earlier source and effective-config observations. The
+[BSP source contract](/home/jresp/solo/workspace/layers/meta-solo-bsp/README.md)
+and [refactor report](scarthgap-refactor-20261028.md) describe the current delta.
+Use the latter report for pinned build/test results when recorded. Archived
+successful boots and earlier image checks do not qualify this candidate.
