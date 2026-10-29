@@ -1,5 +1,7 @@
 # OpenSolo project status and validation evidence
 
+**Latest local BSP candidate:** [permanent power-hold and updater startup fix](controller-power-fix-20261029.md), graph7bac1220…, passes four builds and16 baseline checks. Controller U-Boot asserts holds; Linux owns them until final power-off. Startup verification resynchronizes within a deadline and programming requires the bound driver. This candidate is not installed; current physical Linux/MCU remain unchanged.
+
 **Latest physical MCU state:** [OpenSolo5 bench firmware installed](artoo-flash-result-20261029.md) after explicit authorization using temporary GPIO19/21 holds. Full readback/page127 preservation and settled exact-version/calibration/bridge checks pass; controls are released. Linux remains be98 plus its Chrony correction. Permanent BSP/updater power handling remains pending.
 
 Latest locally qualified full-image software: [Chrony startup follow-up](chrony-boot-fix-20261029.md), graph `faf3df65da77abf796fe1ff23ea5e657d64a3b4245d051ff4407bc94300a40a3`. Four builds, sixteen baseline checks, four ARM runtime, four C wire and four Linux suites pass. The running controller is be98 plus the authorized startup-script overlay fix; its subsequent warm reboot verifies early NTP synchronization, Wi-Fi/SSH, bridge, log routing/rotation arguments and console session ownership. No STM32 firmware change occurred; broader hardware/flight acceptance remains separate.

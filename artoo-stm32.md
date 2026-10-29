@@ -1,5 +1,7 @@
 # Artoo STM32 controller firmware
 
+**Latest local BSP candidate:** [permanent power-hold and updater startup fix](controller-power-fix-20261029.md), graph7bac1220…, passes four builds and16 baseline checks. Controller U-Boot asserts holds; Linux owns them until final power-off. Startup verification resynchronizes within a deadline and programming requires the bound driver. This candidate is not installed; current physical Linux/MCU remain unchanged.
+
 **Latest physical MCU state:** [OpenSolo5 bench firmware installed](artoo-flash-result-20261029.md) after explicit authorization using temporary GPIO19/21 holds. Full readback/page127 preservation and settled exact-version/calibration/bridge checks pass; controls are released. Linux remains be98 plus its Chrony correction. Permanent BSP/updater power handling remains pending.
 
 **Latest boot-path test:** [automatic-update preflight](artoo-boot-preflight-20261029.md) reproduces the reset in actual rcS/S60 context. The one-shot guard prevented replay, the hook is restored, and MCU firmware/calibration are unchanged.

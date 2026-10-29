@@ -1,5 +1,7 @@
 # Artoo serial link and flashing readiness — October 29
 
+**Latest local BSP candidate:** [permanent power-hold and updater startup fix](controller-power-fix-20261029.md), graph7bac1220…, passes four builds and16 baseline checks. Controller U-Boot asserts holds; Linux owns them until final power-off. Startup verification resynchronizes within a deadline and programming requires the bound driver. This candidate is not installed; current physical Linux/MCU remain unchanged.
+
 **Latest physical MCU state:** [OpenSolo5 bench firmware installed](artoo-flash-result-20261029.md) after explicit authorization using temporary GPIO19/21 holds. Full readback/page127 preservation and settled exact-version/calibration/bridge checks pass; controls are released. Linux remains be98 plus its Chrony correction. Permanent BSP/updater power handling remains pending.
 
 **Later live test:** [temporary legacy power-hold test](artoo-power-hold-test-20261029.md) passes application reset and ROM identity/geometry/repeated readback/release with both GPIO19/21 driven high. Linux stays up; calibration matches and pins are released afterward. Permanent BSP/updater correction remains pending; no flashing occurred.

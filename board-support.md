@@ -1,5 +1,7 @@
 # OpenSolo board support and porting work
 
+**Latest local BSP candidate:** [permanent power-hold and updater startup fix](controller-power-fix-20261029.md), graph7bac1220…, passes four builds and16 baseline checks. Controller U-Boot asserts holds; Linux owns them until final power-off. Startup verification resynchronizes within a deadline and programming requires the bound driver. This candidate is not installed; current physical Linux/MCU remain unchanged.
+
 The current source candidate stays on NXP Scarthgap and Linux 6.6.52. Both Solo
 machines now use the owned `solo-imx6-common.inc`, requiring NXP's `imx-base.inc`
 and Cortex-A9 tune directly. They no longer inherit the complete SABRE board.
