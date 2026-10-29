@@ -1,8 +1,8 @@
 # OpenSolo modern port project documentation
 
-The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. Both development and release profiles pass offline image/initramfs/ARM checks, with repeatable packaging. See the [Scarthgap refactor result](scarthgap-refactor-20261028.md) for exact pins, 82 relevant passing tests and remaining hardware limits. The working controller card has not been replaced by this refactor.
+The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. The preserved source9 development and release profiles passed offline image/initramfs/ARM checks, with repeatable cached-rootfs packaging. These results do not qualify the newer maintenance candidate. See the [Scarthgap refactor result](scarthgap-refactor-20261028.md) for exact pins, 82 relevant passing tests and remaining hardware limits. The working controller card has not been replaced by this refactor.
 
-Last updated: October 28, 2026. The current local refactor stays on Scarthgap; Yocto 6 and license work are deferred. [WSL relocation verification](wsl-relocation-20261028.md) remains historical evidence.
+Last updated: October 28, 2026. Maintenance A is paused at the user’s request with checkpoint commits/pushes authorized. The [pause and resume checkpoint](scarthgap-maintenance-a-pause-20261028.md) records the unqualified `7f9d2899…` candidate, completed host/metadata/patch checks and unfinished image/ARM work. The port stays on Scarthgap; Yocto 6 and license work are deferred. [WSL relocation verification](wsl-relocation-20261028.md) remains historical evidence.
 
 ## Last offline-qualified baseline (not flashed)
 
@@ -49,7 +49,7 @@ selected staged Artoo artifact has its own byte authority.
 | [Project roadmap](roadmap.md) | Next software work, hardware milestones and acceptance criteria. |
 | [Decisions and build history](decisions-and-history.md) | Integration decisions, completed milestones and how to maintain these guides. |
 
-Use [Build and validation](build-and-test.md) to resume work on this machine. Use [Project status and evidence](status-and-evidence.md) to identify the verified image before a hardware session.
+For the paused maintenance candidate, start with the [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md). Use [Build and validation](build-and-test.md) for general commands. Use [Project status and evidence](status-and-evidence.md) to identify the verified image before a hardware session.
 
 ## Local entry points
 
