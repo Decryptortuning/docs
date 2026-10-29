@@ -37,10 +37,10 @@ python3 scripts/smoke-maintenance.py \
 
 | Check | What it establishes |
 |---|---|
-| `validate-image.py` | MBR/GOLDEN bounds, exact embedded producer payloads, raw U-Boot placement, update archive/MD5, versioned SD link and controller DHCP configuration. |
+| `validate-image.py` | Exact kernel/DTB/rootfs/U-Boot payloads; raw boot/env bounds; deterministic FAT/tar metadata; graph/profile receipt and actual VERSION; kernel configuration/module ABI; fresh-image SSH policy and staged Artoo isolation. |
 | `validate-initramfs.py` | Embedded scripts equal committed source; correct machine identity; controller initramfs BusyBox equals the ARM probe binary. |
 | Unit tests | Provisioning/update failure and resume behavior with simulated physical commands and temporary regular-file raw writes. |
-| `smoke-controller.py` | Selected ARM Python/SLIP/configuration checks and DNSMasq syntax without starting its daemon. |
+| `smoke-controller.py` | ARM Python/SLIP/configuration checks, DNSMasq syntax and actual target OpenSSH effective policy, including the restricted controller log receiver. |
 | `smoke-maintenance.py` | Production archive preflight and raw-file readback using actual ARM BusyBox utilities; no GNU utility fallback. |
 
 The image validator's `--baseline` option relaxes deployment-link and DHCP checks for old saved images. Use the full checks for new output. Validation success describes the checks above; physical boot, radio, pairing and peripheral acceptance remain in the [roadmap](roadmap.md).
@@ -76,12 +76,43 @@ bash scripts/build.sh controller -C rootfs
 
 This deliberately invalidates the rootfs task and runs its dependent image tasks. BitBake reports a forced-task/tainted-hash warning for this request. Validate and preserve the resulting artifact set; this is image regeneration with cached dependencies, not a full clean rebuild.
 
+## Development and release profiles
+
+The default `development` profile contains bench conveniences. The `release` profile excludes pip, nano and vim, uses separate build directories, and retains key-only SSH. Neither profile embeds a private device identity or enables automatic promotion of the staged Artoo candidate. A development image is not an externalsrc build: application source selection stays immutable in both profiles.
+
+```bash
+python3 scripts/configure.py controller --profile release
+bash scripts/build.sh controller --profile release
+python3 scripts/validate-image.py controller --profile release \
+  --deploy /home/jresp/solo/workspace/yocto/imx-yocto-bsp/build-controller-release/tmp/deploy/images/imx_controller
+python3 scripts/validate-initramfs.py controller --profile release
+python3 scripts/smoke-controller.py --target controller --profile release
+python3 scripts/smoke-maintenance.py --target controller --profile release
+```
+
+Use `drone` and `build-solo-release` for the aircraft. Validators require the selected profile in generated configuration, the boot receipt and actual squashfs VERSION. Copying development outputs into a release directory does not qualify them.
+
+New images start without administrator keys, pairing identities or pinned peer keys. Provision these deliberately offline using `/usr/sbin/opensolo-log-provision`; see [current refactor](scarthgap-refactor-20261028.md). Existing RWFS overlays can shadow new SSH policy and retain old keys. Use fresh/spare media with a fresh writable overlay for first acceptance; an ordinary image update does not revoke retained credentials.
+
+## Recover exact sources on another WSL installation
+
+Export from a clean reviewed integration checkout and verified workspace into a new output directory:
+
+```bash
+python3 scripts/workspace.py verify
+python3 scripts/workspace.py export /absolute/native/path/to/new-source-transport
+```
+
+Follow the generated `RECOVERY.md`. It first restores the exact integration Git bundle/revision, then runs that checkout's `workspace.py bootstrap --transport` to recover the locked repositories, reachable version tags, recipe mirrors and immutable Artoo payload. Bundles are self-contained; restored repositories do not use exporting-machine object alternates. Existing dirty checkouts are rejected, never reset automatically.
+
+This transport covers the locked Git inputs and staged firmware. It is not a complete offline mirror of every checksummed recipe archive. Archive downloads still require upstream access or separately supplied Yocto downloads. Shared state is a build optimization, not source authority.
+
 ## Changing pinned inputs
 
 1. Make the change in its owning source repository and review/commit it there. The build guard requires clean vendor and custom-layer repositories.
 2. Update that repository's `revision` and branch information in the integration `workspace-lock.json`. For an application change, also deliberately update the relevant `recipe_sources` entry or use a future explicit development profile.
-3. Run `python3 scripts/configure.py controller` and `python3 scripts/configure.py drone` to update both targets and the native lock copy.
-4. Verify both with `--check`, then run relevant metadata/build/validation checks. Commit the integration lock change with its reason and evidence.
+3. Update locked integration-policy hashes when changing build helpers/templates. Commit the source lock, then regenerate controller/drone configuration for every profile being qualified.
+4. Commit the integration lock/policy changes, wait for related work to finish, pin the combined candidate and review actual producer/consumer behavior. Only then verify configurations and run relevant tests/builds. Dirty tracked build-policy files are rejected. Build receipts separately record the integration commit and tracked status.
 
 The baseline builds fetched pinned application sources. A local app commit must be available to its configured fetcher before a changed pin can build. No automatic publish or development-source override is part of this procedure.
 
@@ -104,7 +135,7 @@ On a new Ubuntu WSL host, install dependencies with `sudo bash scripts/install-h
 | Complete-image shared state | This pinned release disables `do_image_complete` cache creation. Cleanup/regeneration reuses package state and rebuilds final images; a complete-image cache restore has not been demonstrated. |
 | Host distribution warning | Ubuntu 24.04 is outside this pinned vendor release's validated host list. Successful builds retain that warning. |
 | I/O build statistics warning | The WSL kernel lacks `CONFIG_TASK_IO_ACCOUNTING`; that portion of build statistics is unavailable. |
-| Different hashes after regeneration | `/VERSION` includes the wall-clock build date. `/etc/timestamp` is normalized separately. Input pinning alone does not establish bit-for-bit reproducibility. |
+| Reproducibility | VERSION and image packaging use the locked source epoch; FAT serial, MBR ID and tar/gzip metadata are normalized. Compare actual equivalent outputs before claiming reproducibility; a cached build is not a clean-room rebuild. |
 
 Build logs are saved under `/home/jresp/solo/.integration/logs`, alongside `.sources.json` and native-tar hash records. A failed input guard should be resolved deliberately; silently editing generated configuration defeats that verification.
 
@@ -133,30 +164,4 @@ controller host key. Password/keyboard-interactive SSH authentication is disable
 by the card's local drop-in. Existing authorized public keys are preserved.
 Private staging/evidence is under `/home/jresp/solo/.integration/controller-lan`.
 
-Writing the settings mounted RWFS normally, replayed its pending journal, then
-cleanly unmounted it. A subsequent read-only e2fsck passed without the previous
-allocation-count differences. LAN association and actual SSH access still require
-a boot/connection verification; installing the profile alone does not prove them.
-
-The initial combined AP/station boot briefly associated with OpenWrt but did not
-complete WPA authentication or obtain a DHCP lease. The card logs show AP startup
-falling back to automatic channel selection while station association was still
-coming up. This suggests a shared-radio startup conflict, pending verification.
-The next profile disables `ApEnable`, retains `StationEnable`, and enables
-wpa_supplicant syslog output through a card-local network hook override. SSH
-started and listened on port 22 in the failed LAN boot; network reachability and
-key login remain unverified. RWFS again passed its check after clean unmount.
-
-The station-only boot still lost beacons after successful WPA negotiation. A
-card-local MSI interrupt diagnostic test is now installed; see
-[latest evidence](status-and-evidence.md). Wi-Fi/SSH access is still unverified.
-
-The MSI test boot obtained `192.168.2.207` through OpenWrt DHCP. Both direct-IP
-and `ssh opensolo-controller` logins succeeded with the pinned host key and
-dedicated client key. The live driver reports MSI enabled, IRQ 295 allocated,
-power save off, and the correct LAN gateway/DNS. Access is intermittent: beacon
-loss and locally generated reason-4 disconnects still occur, followed by
-reconnection. This is verified LAN/SSH access, not stable network acceptance.
-The received signal also improved between boots, so MSI alone is not established
-as the cause of the improvement. Evidence is under
-`/home/jresp/solo/.integration/controller-lan/msi-boot-success-20261028`.
+The subsequent root cause and accepted kernel fix are documented in [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md). The development controller now uses the validated `pci=nomsi` kernel. Historical MSI/station-only experiments remain in their evidence directories; they are not the current radio policy. This card retains its older rootfs and local overlay until a separately planned hardware cutover. The Scarthgap refactor and source-recovery tests do not change its network settings or firmware.

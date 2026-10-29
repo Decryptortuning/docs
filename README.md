@@ -1,13 +1,14 @@
 # OpenSolo modern port project documentation
 
-The recovered OpenSolo port builds controller and drone images on Yocto Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. The current controller baseline passes image validation, 26 maintenance fault tests and ARM userspace checks. Physical controller acceptance and the drone media port remain open.
+The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. Both development and release profiles pass offline image/initramfs/ARM checks, with repeatable packaging. See the [Scarthgap refactor result](scarthgap-refactor-20261028.md) for exact pins, 82 relevant passing tests and remaining hardware limits. The working controller card has not been replaced by this refactor.
 
-Last updated: October 28, 2026. Both image targets were rebuilt and validated after the integration checkout moved to native WSL storage; see [WSL relocation verification](wsl-relocation-20261028.md).
+Last updated: October 28, 2026. The current local refactor stays on Scarthgap; Yocto 6 and license work are deferred. [WSL relocation verification](wsl-relocation-20261028.md) remains historical evidence.
 
 ## Project guides
 
 | Guide | Purpose |
 |---|---|
+| [Scarthgap refactor result](scarthgap-refactor-20261028.md) | Current source organization, profile/security policy, four-image qualification and packaging/source-recovery evidence. |
 | [Project status and evidence](status-and-evidence.md) | Current controller baseline, artifact identity, validation coverage and remaining limits. |
 | [Wrynose migration plan](yocto-wrynose-migration-plan.md) | Concrete kas workspace, ordered implementation waves, acceptance gates and rollback for the NXP Wrynose port. |
 | [Scarthgap package maintenance audit](scarthgap-package-update-audit-20261028.md) | Complete historical image inventory, verified maintenance candidates and next-round package update priorities without moving to Yocto 6. |

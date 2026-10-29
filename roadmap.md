@@ -6,9 +6,9 @@ existing boot/storage contract. Yocto 6 is deferred. License work is deferred
 by the user and is not part of this wave's acceptance scope.
 
 Source implementation, offline validation and physical qualification are
-separate milestones. The [forthcoming refactor report](scarthgap-refactor-20261028.md)
-will record the combined pins and build/test outcomes; this roadmap does not
-assert success for builds still running.
+separate milestones. The [refactor report](scarthgap-refactor-20261028.md)
+records the combined pins, successful four-profile builds and offline/ARM
+qualification. Physical acceptance remains separate.
 
 ## Implemented source foundation
 

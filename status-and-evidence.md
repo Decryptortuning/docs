@@ -1,5 +1,9 @@
 # OpenSolo project status and validation evidence
 
+The latest local image candidate is the [Scarthgap refactor](scarthgap-refactor-20261028.md): controller/drone development and release builds pass full offline/ARM qualification, 82 relevant tests pass, and all four packaging repeats match byte for byte. Exact artifact copies are in [qualified-source9](/home/jresp/solo/recovery/scarthgap-refactor-20261028/qualified-source9). Source recovery and remaining hardware limits are recorded in that report. These images have not been flashed. The physical controller retains its older rootfs/overlay and qualified no-MSI kernel; Artoo remains unflashed.
+
+The relocation tables and hashes below describe earlier preserved baselines. Use the new refactor report for current source/image qualification; use the Wi-Fi/serial reports for the physical controller's observed state.
+
 Current October 28 Wi-Fi/Artoo acceptance: [permanent PCIe kernel fix and two
 warm reboot results](controller-wifi-pci-20261028.md), plus [local bench/normal
 Artoo qualification](artoo-bench-idle-20261028.md). The kernel is installed;
@@ -9,7 +13,7 @@ original scope and identity.
 
 As of October 28, 2026, both controller and drone images build and pass image/initramfs validation on this WSL host. The controller also passes 26 maintenance fault tests and ARM userspace/utility checks. The drone media pipeline and current physical board behavior remain unverified. See the [WSL relocation verification](wsl-relocation-20261028.md) for the latest build scope and source fix.
 
-## Current validation coverage
+## Earlier relocation validation coverage
 
 | Area | Status | Evidence or practical limit |
 |---|---|---|
@@ -30,9 +34,9 @@ As of October 28, 2026, both controller and drone images build and pass image/in
 
 ## Verified controller baseline
 
-The current `meta-3dr` revision is `2f5bee6a16480dcea72e00d733d423f13d19ac82`; the BSP revision is `cfae891da533653a1a82d69499370d968934a035`. The controller artifacts were regenerated at `a4aa5bc54758835216dfe57b33d1771bc208483b` and verified unchanged by a successful build at the final product revision. The intervening change enables the requested drone KMS package and isolates its architecture. Each preserved artifact set has its exact build inputs and source lock.
+At the preserved relocation baseline, the `meta-3dr` revision was `2f5bee6a16480dcea72e00d733d423f13d19ac82`; the BSP revision is `cfae891da533653a1a82d69499370d968934a035`. The controller artifacts were regenerated at `a4aa5bc54758835216dfe57b33d1771bc208483b` and verified unchanged by a successful build at the final product revision. The intervening change enables the requested drone KMS package and isolates its architecture. Each preserved artifact set has its exact build inputs and source lock.
 
-The current verified controller copy is [wsl-relocation-20261028/controller](/home/jresp/solo/recovery/wsl-relocation-20261028/controller/verification.json). It contains eight artifacts, validation reports, original build inputs and the final-source recheck. Stable filenames select the copied versioned outputs. The [October 8 baseline](/home/jresp/solo/recovery/controller-maintenance-20261008/verification.json) remains preserved as earlier evidence.
+The preserved relocation controller copy is [wsl-relocation-20261028/controller](/home/jresp/solo/recovery/wsl-relocation-20261028/controller/verification.json). It contains eight artifacts, validation reports, original build inputs and the final-source recheck. Stable filenames select the copied versioned outputs. The [October 8 baseline](/home/jresp/solo/recovery/controller-maintenance-20261008/verification.json) remains preserved as earlier evidence.
 
 | Artifact | SHA-256 |
 |---|---|
@@ -42,7 +46,7 @@ The current verified controller copy is [wsl-relocation-20261028/controller](/ho
 
 The SD filename is `3dr-controller-imx_controller.rootfs.sdcard`; the update archive is `3dr-controller.tar.gz` with its `.md5` sidecar. Full artifact hashes and versioned names are in the snapshot's `verification.json`. DTB and U-Boot hashes remain unchanged from the comparison baseline; the bundled kernel/initramfs also remains unchanged from the October 8 maintenance build.
 
-## Current reports
+## Earlier relocation reports
 
 | Report | Contents |
 |---|---|

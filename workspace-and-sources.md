@@ -32,17 +32,17 @@ The integration repository, source checkouts, builds and caches all use native W
 
 `meta-3dr` owns the `3dr-imx-fb` distro, application recipes, controller DHCP configuration, custom SD/update image generation, initramfs maintenance and product startup integration. `meta-solo-bsp` owns the two machines and their kernel/U-Boot hardware definitions. The shared machine override is `imx-solo`; controller-only behavior uses the controller override.
 
-The product distro has moved out of the BSP, and both layers declare dependencies. The BSP still relies on the product layer's initramfs and init policy. Independent BSP reuse and cleanup of copied generic recipes remain [roadmap work](roadmap.md).
+The product distro has moved out of the BSP, and both layers declare dependencies. The shared machine include now describes actual Solo hardware rather than inheriting the entire SABRE SD machine. Canonical U-Boot defaults generate the installed boot.env; hardware deployment policy belongs to the BSP. Product images compose common policy and role packagegroups; machine configuration is installed by its owning provider recipe. Product initramfs dependencies remain explicit. See [Scarthgap refactor](scarthgap-refactor-20261028.md).
 
 ## Application source selection
 
 The main recovered app repositories are `sololink`, `sololink-python`, `shotmanager`, `stm32loader` and `artoo-firmware`. Their configured origins are under `Decryptortuning`. DroneKit, DroneKit Solo, PyMAVLink and MAVProxy also have recipe source entries in the integration lock. MAVProxy is pinned but unused by the controller baseline.
 
-The lock records ten project repositories, seventeen vendor repositories and eight recipe source pins. `scripts/configure.py` turns the recipe pins into native `SRCREV:pn-*` overrides and verifies vendor/custom-layer revisions and cleanliness before generating configuration.
+The lock records ten project repositories, seventeen vendor repositories and ten recipe source pins, including explicit kernel and U-Boot commits. `scripts/configure.py` turns the recipe pins into native `SRCREV:pn-*` overrides and verifies vendor/custom-layer revisions and cleanliness before generating configuration.
 
-The baseline builds pinned fetched sources. Editing an app checkout alone does not change the image. An explicit development profile is still needed; before enabling in-place builds, fix SoloLink installation code that currently modifies content under `S`.
+The baseline builds pinned fetched sources. Editing an app checkout alone does not change the image. The development profile selects bench packages while retaining pinned sources; a separate devtool/externalsrc workflow remains future work. SoloLink installation now copies role-selected files directly into `D` instead of rewriting its source checkout.
 
-The controller packages the layer's existing Artoo firmware binary. Its image build does not compile the `apps/artoo-firmware` checkout.
+The controller packages an immutable hash-locked Artoo candidate selected by `workspace-lock.json`, under `/firmware/candidates`. It does not compile the Artoo checkout or expose the candidate to the automatic updater. The selected Yocto artifact and newer primary Artoo development checkout are distinct until an explicit promotion updates the lock.
 
 ## Making changes
 
@@ -60,4 +60,4 @@ After an intentional layer commit, update its lock entry and regenerate both tar
 
 New Linux, web, Android and kernel repositories belong under `/home/jresp/Active_GH` in WSL `Ubuntu-24.04`, using WSL Git and native Linux tooling. Repositories requiring native Windows tools use `C:\Users\JResp\Documents\Active_GH`. An explicitly requested destination takes precedence. The restored `/home/jresp/solo` workspace remains in its existing native location.
 
-The Artoo project inventory entry uses an absolute checkout path because its primary development checkout is outside the restored workspace. Other relative paths remain workspace-relative. This inventory change does not alter the prebuilt Artoo payload in the baseline Yocto image.
+Build-input repository paths are workspace-relative and portable. Inventory-only entries do not select build inputs. The primary Artoo development checkout is outside the restored workspace; the lock selects the immutable binary and manifest used by Yocto independently. Export transports include exact integration code, pinned repositories/recipe mirrors and firmware, with recovery instructions; see [Build and validation](build-and-test.md#recover-exact-sources-on-another-wsl-installation).

@@ -6,7 +6,7 @@ and Cortex-A9 tune directly. They no longer inherit the complete SABRE board.
 The source refactor preserves SoC overrides/providers and enumerates Solo USB,
 PCIe Wi-Fi, audio and display features without SABRE SDIO/Bluetooth/touchscreen
 or OP-TEE identity. Build and hardware qualification are separate gates; see the
-[forthcoming refactor report](scarthgap-refactor-20261028.md) for the combined
+[refactor report](scarthgap-refactor-20261028.md) for the combined
 candidate and results as they become available.
 
 ## Active definitions
@@ -48,8 +48,8 @@ Product distro, images and maintenance scripts belong to `meta-3dr`.
 The controller's scoped `pci=nomsi` and `CONFIG_CMDLINE_EXTEND` policy is
 preserved. The physical card currently combines the older rootfs with the
 qualified nomsi kernel; it is not the new refactor image. The MCU reset-readiness
-work remains on hold. No successful new build or hardware result is asserted
-by these source changes.
+work remains on hold. The refactor report records successful offline builds and checks; physical
+acceptance of the new image remains separate.
 
 | Item | Current assessment and remaining gate |
 |---|---|
