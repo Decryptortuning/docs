@@ -75,3 +75,22 @@ The old drone image still includes BlueZ, oFono, neard, rpcbind and NXP WLAN ext
 5. **Build and qualify only that frozen candidate:** separate TMPDIR/profile outputs; check manifests, selected providers, native tools and ABI as well as package versions. Run CVE assessment with a dated database and patch/config disposition evidence, then targeted offline tests and both-board boot/recovery/network/video/USB/serial qualification. Re-run only tests affected by subsequent fixes after freezing a replacement candidate. Do not claim new packages fix the unresolved live GPIO/STM32 reset issue.
 
 Completion of this audit means the next maintenance work is identified and inventory is reviewable. It does not make a new image release-ready, certify all packages, or authorize changes to the active build.
+
+## Source-only refactor maintenance addendum — 28 October 2026
+
+A subsequent read-only comparison used integration `23c46d6`, meta-3dr `dad20b59c03d301fef76ce032c14feb141a08113` and meta-solo-bsp `d76bd3bbe266fd96c5dc231a04edb4e6976e739a`. This is a source snapshot, **not a successfully installed image inventory**. The coordinator reports that wave5 controller rootfs assembly failed in `opensolo-access` postinstall before shadow conversion; its correction is pending. No new successful controller/drone or release-profile manifests were supplied. The historical **185-recipe count remains unchanged**.
+
+The refactor introduces five source recipes and two additional binary splits to track in the next maintenance round:
+
+| Source/package unit | Intended scope | Maintenance ownership and next-round gate |
+| --- | --- | --- |
+| `packagegroup-opensolo-controller`, `packagegroup-opensolo-solo` | Respective main images, both profiles | meta-3dr owns dependency closure. Both conditionally add pip/nano/vim for development. Compare completed manifests for each role/profile; static dependency lists do not establish installed contents. |
+| `opensolo-access` | Both roles/profiles | meta-3dr owns key-only SSH policy and root-account provisioning, integrated with OpenSSH/shadow. Resolve the reported postinstall ordering failure before claiming an image result; review the corrected account lifecycle together with login/recovery behavior. |
+| `opensolo-log-receiver` | Controller, both profiles | A binary split **from `opensolo-access`**, not another source recipe. meta-3dr owns the `sololog` account, mounted LOG directory permissions, paired keys and SSH forced-command tail; SoloLink owns the sender. Review these producers/consumers together. |
+| `opensolo-platform-config` | Both roles/profiles | meta-3dr owns sysctl initialization, udev automount exclusions and `/usr/bin/python` selection. Requalify init ordering, recovery mounts and Python consumers after core maintenance. |
+| `opensolo-controller-ucm` | Controller only | meta-3dr owns the HDMI ALSA UCM overlay and driver-name mappings. Check against both updated ALSA data and actual kernel audio card names. |
+| `rsync-rrsync` | Controller receiver dependency | A binary split **from the existing `rsync` recipe** through `rsync_%.bbappend`. Upstream rsync owns the restriction implementation; meta-3dr owns packaging, Python dependencies and forced-command integration. Keep it from the same selected rsync source and recheck script/shebang/options when evaluating 3.5.1. |
+
+These local policy packages have no independent upstream release stream: maintain them through reviewed layer commits and their actual external contracts. The OpenSSH append also owns placement of receiver `Match` configuration after global settings. `opensolo-image.inc` owns common image policy/identity and `opensolo-policy.bbclass` validates profile selection; neither is an extra installed package. Existing BusyBox, init, network, multimedia and BSP appends remain downstream obligations when adopting newer Scarthgap recipes. Other recipe names on disk absent from the historical inventory include image recipes and legacy alternatives; their presence does not establish selection or installation.
+
+The separate evidence file `refactor-source-maintenance-addendum-20261028.json` records the complete local layer recipe-name comparison, new-unit ownership, source hashes and append inventory. Preserve it separately from historical package evidence. Reconcile it with final successful manifests after the combined source gate; do not add these source-only units to installed-image totals now.
