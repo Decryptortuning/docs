@@ -115,15 +115,33 @@ engines; physical offload/throughput remains deferred.
 
 ## Publication checkpoint and preserved state
 
-The user authorized commits and pushes of this paused checkpoint. The intended
-feature ref for OPenSolo_2, meta-3dr, meta-solo-bsp, SoloLink and docs is
+The user authorized commits and pushes of this paused checkpoint. All eight
+checkpoint repositories were pushed and their exact remote revisions verified.
+The feature ref for OPenSolo_2, meta-3dr, meta-solo-bsp, SoloLink and docs is
 `codex/scarthgap-maintenance-a`. Required ShotManager and STM32Loader source pins
 use existing `PORT` refs with verified fast-forward updates. Artoo's prior primary
 `4803457` checkpoint uses `codex/artoo-wsl` separately; it does not replace the
 unchanged Yocto-staged `60a2707` firmware authority. This is not a staged firmware
-upgrade. No merges, force pushes or default-branch changes are intended. Remote
-publication success is recorded separately by the coordinator; this document
-does not claim a push occurred or that publication qualifies an image.
+upgrade. No merges, force pushes or default-branch changes were made. The
+coordinator retained the complete push/verification receipt as
+`publication-after.json` in the evidence root. Publication does not qualify an image.
+
+Published source checkpoints (October 28 Phoenix time):
+
+| Repository | Ref | Verified commit |
+|---|---|---|
+| [sololink](https://github.com/Decryptortuning/sololink/tree/codex/scarthgap-maintenance-a) | `codex/scarthgap-maintenance-a` | `cd3ff3c7e311a5498a746b0187c38e21aa660438` |
+| [shotmanager](https://github.com/Decryptortuning/shotmanager/tree/PORT) | `PORT` | `fc9fd5bdfb73ccf5968817f50fbbde054ba0da39` |
+| [stm32loader](https://github.com/Decryptortuning/stm32loader/tree/PORT) | `PORT` | `a8db3edfb6f91b366d0d4990bfe921d1595c2718` |
+| [artoo-firmware](https://github.com/Decryptortuning/artoo-firmware/tree/codex/artoo-wsl) | `codex/artoo-wsl` | `48034572145e9e62dff881141277564e1ed1d3a6` |
+| [meta-3dr](https://github.com/Decryptortuning/meta-3dr/tree/codex/scarthgap-maintenance-a) | `codex/scarthgap-maintenance-a` | `d0bdc66e388768712cec31f54d683d5af1d5a63d` |
+| [meta-solo-bsp](https://github.com/Decryptortuning/meta-solo-bsp/tree/codex/scarthgap-maintenance-a) | `codex/scarthgap-maintenance-a` | `1602ee542d832ba51b7badad15faad6755acb2a7` |
+| [docs](https://github.com/Decryptortuning/docs/tree/codex/scarthgap-maintenance-a) | `codex/scarthgap-maintenance-a` | `41d98f2e1c7b921af91c7db27dd61b5381ac00a7` |
+| [OPenSolo_2](https://github.com/Decryptortuning/OPenSolo_2/tree/codex/scarthgap-maintenance-a) | `codex/scarthgap-maintenance-a` | `dda3531d1510ddf4c24255c775b1a9e4f854f907` |
+
+The docs row identifies the initial pause checkpoint; the subsequent publication
+receipt update changes documentation only. SoloLink Python was already published
+at its locked `975bda067750ca47a43d69d8022382a9c4b384b4` PORT revision.
 
 The immutable source9 graph
 `36f841398e89201e2e462391cfa2779188349999090295c8b91c967f29380138`
