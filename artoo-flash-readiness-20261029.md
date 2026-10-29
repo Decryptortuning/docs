@@ -1,5 +1,7 @@
 # Artoo serial link and flashing readiness — October 29
 
+**Subsequent authorized diagnostics:** [reset diagnosis](artoo-reset-diagnosis-20261029.md) reproduces the i.MX restart in application mode and with ROM requested. No flashing occurred; exact electrical cause remains unresolved. The earlier non-disruptive readiness observations below retain their original scope.
+
 The running i.MX–STM32 application link passes the scoped check. **Flashing is not yet cleared:** the reset/ROM-entry path previously restarted Linux and has not completed a successful ROM identification/readback cycle. No MCU reset, GPIO change, bootloader entry, bridge stop, target file installation, erase, write, unprotect or flash was performed in this session.
 
 The controller runs Linux graph be98 plus the documented Chrony init overlay correction. The observed boot is `4ca4253b-8ec9-4c53-8ea7-b26bca12dbb7`; running MCU firmware remains OpenSolo-4dev and reports hardware ID 3. Battery-only operation was confirmed by the user. A different supply has not been shown to fix the historical failure and is not an established prerequisite for this check.
