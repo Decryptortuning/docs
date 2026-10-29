@@ -46,7 +46,7 @@ profile's immutable source contract.
 
 ## Controller hardware acceptance
 
-The last observed running controller uses Maintenance A graph7055 with the qualified nomsi kernel,
+The last observed running controller uses graphbe98 with the qualified nomsi kernel,
 Wi-Fi/DHCP/key-only SSH and unchanged OpenSolo-4dev MCU firmware. Latest local
 software graphbe98 includes the MAVLink/Python modernization and R01–R04 Linux
 fixes, with all four profiles qualified in software; see the
@@ -99,3 +99,7 @@ License review remains deferred for the user's later pre-publication work.
 ## October29 next hardware session
 
 The approved controller SD now contains be98 with fresh188MiB GOLDEN/LATEST and offline LAN/SSH provisioning; image readback, payload and filesystem checks pass. First boot is pending. Verify actual VERSION, stable Wi-Fi/SSH and expected MCU identity, then R01 dedicated log routing, R02 effective rotation arguments, R03 clock-source/owner/runlevel behavior and R04 absence of console ownership warnings. Keep STM32 flashing, watchdog arming and memory/stack tuning separate from this Linux boot check. See the [card preparation ledger](scarthgap-maintenance-a-20261028.md#october29-be98-controller-card-prepared--boot-pending).
+
+## Chrony physical follow-up
+
+Be98 now boots and has scoped network/bridge/logging/console evidence, but its clock client fails on an absent install utility. Corrected local graphfaf and stronger actual ARM utility/lifecycle checks pass in all four profiles. The [startup report](chrony-boot-fix-20261029.md) records the prepared SSH-only patch and pending Linux reboot authorization. Do not describe R03 as physically accepted until that deployment and real network time synchronization are observed.

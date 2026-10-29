@@ -1,5 +1,7 @@
 # Controller Linux maintenance — October 29
 
+**Physical follow-up:** be98 boot confirms scoped R01/R02/R04 behavior but exposes a missing install utility in R03 startup. The [Chrony startup follow-up](chrony-boot-fix-20261029.md) records corrected local graphfaf, stronger tests and pending live deployment. The original software qualification below retains its historical scope.
+
 The October29 live audit's R01–R04 fixes are implemented locally on top of the completed MAVLink/Python modernization. Candidate graph is `be98b385025c2eff8569d94ab732079ac332ddacfd139c960140f660c5dc7888`. Local software qualification is complete: four builds, sixteen baseline checks, four expanded ARM runtime suites, four compiled C wire suites and four new Linux feature suites pass. The physical controller remains on graph7055 with Artoo OpenSolo-4dev. No installation, flashing, router change or publication is part of this work.
 
 ## Source ownership and behavior
