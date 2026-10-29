@@ -2,9 +2,9 @@
 
 The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in native Ubuntu WSL2. Maintenance A resumed after the WSL restart and completed local software qualification on October 29, 2026: four builds, sixteen image/initramfs/userspace/maintenance checks, four expanded ARM runtime suites, matching cached-rootfs packaging repeats and independent offline source recovery. The [maintenance ledger](scarthgap-maintenance-a-20261028.md) records exact sources, results and limits.
 
-The current graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`. The CVE task closures completed against the recorded current NVD snapshot, but the security review retains findings and coverage gaps. OpenSSL 3.5.9 follow-up, retained kernel/media updates and remaining applicability work are documented in the ledger. Passing software checks does not establish security clearance, a clean full rebuild or hardware acceptance. On October 29, the explicitly authorized controller SD card received the development image, verified readback and fresh offline Wi-Fi/SSH provisioning. Its first controller boot now passes Wi-Fi association, DHCP and authenticated SSH; STM32 firmware is unchanged. The short check includes matching 1 MiB memory-only SSH transfers in both directions and zero ath9k reset counters; reboot/long-soak acceptance remains open. New resume-fix commits are local and unpublished; the earlier pause checkpoint was pushed separately. Yocto 6 and license work remain deferred.
+The deployed controller graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`. The CVE task closures completed against the recorded current NVD snapshot, but the security review retains findings and coverage gaps. OpenSSL 3.5.9 follow-up, retained kernel/media updates and remaining applicability work are documented in the ledger. Passing software checks does not establish security clearance, a clean full rebuild or hardware acceptance. On October 29, the explicitly authorized controller SD card received the development image, verified readback and fresh offline Wi-Fi/SSH provisioning. Its first controller boot now passes Wi-Fi association, DHCP and authenticated SSH; STM32 firmware is unchanged. The short check includes matching 1 MiB memory-only SSH transfers in both directions and zero ath9k reset counters; reboot/long-soak acceptance remains open. New resume-fix commits are local and unpublished; the earlier pause checkpoint was pushed separately. Yocto 6 and license work remain deferred.
 
-## Current locally qualified artifacts
+## Previous qualification and deployed controller baseline
 
 Copies, validation reports and source/checker receipts are preserved in [software-qualification-7055fbe57381](/home/jresp/solo/recovery/scarthgap-maintenance-a-20261028/software-qualification-7055fbe57381). Ordinary build/deploy links select newer outputs when rebuilt; use these copies when identifying this candidate.
 
@@ -37,7 +37,7 @@ is active; meta-solo is inactive inventory. `build_input:false` lock entries are
 unchecked provenance inventory, including docs, scripts and Artoo source; the
 selected staged Artoo artifact has its own byte authority.
 
-The [current MAVLink modernization candidate](mavlink-modernization-20261029.md) is undergoing separate local qualification. The [ROS2/RAS-A investigation](ros2-rasa-investigation-20261029.md) records a separate offboard-first research path. Neither replaces the qualified artifact identities above.
+The [MAVLink modernization candidate](mavlink-modernization-20261029.md), graph `28fd826a52ca4accf0743f3ef3492ae2fe87e608bcb9adc8f4509abc635db244`, now passes four builds, sixteen baseline checks, four ARM runtime suites and four C wire suites. Its preserved artifacts are local and unflashed. The [ROS2/RAS-A investigation](ros2-rasa-investigation-20261029.md) records a separate offboard-first research path. The new local candidate and the deployed controller baseline have separate artifact identities.
 
 ## Project guides
 
