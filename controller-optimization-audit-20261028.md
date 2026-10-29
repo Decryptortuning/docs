@@ -402,3 +402,9 @@ Probe limits are retained in stderr: this image lacks PSI files and tune2fs,
 and its BusyBox df/netstat omit some host-style options. Replacement procfs and
 supported-command observations were used where available. Missing instrumentation
 is not a zero-pressure result, and no mounted-filesystem fsck was attempted.
+
+## October29 R01–R04 implementation follow-through
+
+The [controller Linux maintenance result](controller-linux-maintenance-20261029.md) records locally committed source fixes and four-profile software qualification for R01–R04. The explicit logger API preserves fortification and nonblocking/drop behavior; BusyBox rotation is effectively installed; bounded Chrony network-time ownership is fenced against the retained GPS step path; UART0 getty preserves its init session. Four builds, sixteen baseline, four expanded ARM, four C wire and four Linux suites pass. These are later results and do not rewrite the historical live observations above.
+
+Physical acceptance remains pending on graphbe98; the controller still runs7055. R05 watchdog and R06 GPU/CMA/stack work require a separately authorized powered/loaded bench session. Plain NTP does not establish authenticated trusted time. Existing security findings remain open, and no hardware or router change occurred.

@@ -1,6 +1,6 @@
 # OpenSolo project roadmap
 
-Status date: October 28, 2026. The current implementation wave modernizes the
+Status date: October 29, 2026. The current implementation wave modernizes the
 owned Scarthgap metadata and workflow while retaining NXP Linux 6.6.52 and the
 existing boot/storage contract. Yocto 6 is deferred. License work is deferred
 by the user and is not part of this wave's acceptance scope.
@@ -23,7 +23,7 @@ qualification. Physical acceptance remains separate.
 | Artoo handoff | Yocto stages the selected immutable candidate and manifest under `/firmware/candidates`, outside the automatic updater's `/firmware/artoo_*.bin` search. Native firmware and software-model evidence remain distinct from device programming authority. |
 | Recovery checks | Existing partition/update failure handling is retained, with both-role fault scenarios and ARM userspace/utility checks available. Do not reinterpret earlier successful tests as results for newly changed sources. |
 
-## Future candidate offline acceptance (source9 complete)
+## Future candidate offline acceptance (latest be98 software checks complete)
 
 After related components are frozen, pin and review the complete producer and
 consumer contract before tests/builds. Record provider/append closure, effective
@@ -46,8 +46,12 @@ profile's immutable source contract.
 
 ## Controller hardware acceptance
 
-The physical card currently has the older rootfs plus the qualified nomsi
-kernel. It is not the newly refactored image. MCU reset readiness is on hold;
+The physical card runs Maintenance A graph7055 with the qualified nomsi kernel,
+Wi-Fi/DHCP/key-only SSH and unchanged OpenSolo-4dev MCU firmware. Latest local
+software graphbe98 includes the MAVLink/Python modernization and R01–R04 Linux
+fixes, with all four profiles qualified in software; see the
+[maintenance result](controller-linux-maintenance-20261029.md). Controller
+development now needs188MiB GOLDEN versus168MiB on that card. MCU reset readiness remains on hold;
 source packaging or an offline test does not lift that hold. Preserve the
 [recorded baseline and evidence](status-and-evidence.md) and use the authorized
 hardware scope when a session is resumed. Identify the actual storage/serial
