@@ -1,5 +1,7 @@
 # Artoo reset diagnosis — October 29
 
+**New source finding:** [legacy power-control comparison](artoo-legacy-power-comparison-20261029.md) identifies omitted controller U-Boot GPIO19/21 output-high initialization. Reset/BOOT mapping matches the old BSP. This is the leading source-backed explanation, pending live register/electrical confirmation; no restoration or flashing has been performed.
+
 **Later automatic-path test:** [one-shot boot preflight](artoo-boot-preflight-20261029.md) also restarted Linux during loader initialization. Its recovery skip guard worked, the original hook was restored and firmware/calibration remain unchanged; no flashing occurred.
 
 The authorized diagnostic round reproduced the i.MX restart with a normal application reset, then with a shorter requested pulse and with ROM mode requested. **No MCU erase, write, protection change or flashing occurred.** The controller recovered after each attempt. The final observed MCU remains OpenSolo-4dev, with the same factory parameter record and a normal single bridge owner.

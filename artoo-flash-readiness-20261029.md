@@ -1,5 +1,7 @@
 # Artoo serial link and flashing readiness — October 29
 
+**New source finding:** [legacy power-control comparison](artoo-legacy-power-comparison-20261029.md) identifies omitted controller U-Boot GPIO19/21 output-high initialization. Reset/BOOT mapping matches the old BSP. This is the leading source-backed explanation, pending live register/electrical confirmation; no restoration or flashing has been performed.
+
 **Later automatic-path test:** [one-shot boot preflight](artoo-boot-preflight-20261029.md) also restarted Linux during loader initialization. Its recovery skip guard worked, the original hook was restored and firmware/calibration remain unchanged; no flashing occurred.
 
 **Subsequent authorized diagnostics:** [reset diagnosis](artoo-reset-diagnosis-20261029.md) reproduces the i.MX restart in application mode and with ROM requested. No flashing occurred; exact electrical cause remains unresolved. The earlier non-disruptive readiness observations below retain their original scope.

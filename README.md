@@ -58,6 +58,7 @@ The preceding [MAVLink modernization candidate](mavlink-modernization-20261029.m
 | [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md) | PCIe interrupt root cause, permanent kernel policy, module compatibility and reboot acceptance. |
 | [Artoo bench idle option](artoo-bench-idle-20261028.md) | Local idle-only development profile, all-six builds and normal/bench Renode qualification. |
 | [Artoo automatic-path preflight](artoo-boot-preflight-20261029.md) | Actual one-shot S60 boot test, reset reproduction, skip guard and restored hook; no programming. |
+| [Artoo legacy power comparison](artoo-legacy-power-comparison-20261029.md) | Missing legacy controller power-on GPIO19/21 initialization; matching reset mapping and next verification steps. |
 | [Artoo reset diagnosis](artoo-reset-diagnosis-20261029.md) | Controlled application/ROM-request reset comparisons, recovered controller and unresolved physical gate. |
 | [Artoo flashing readiness](artoo-flash-readiness-20261029.md) | Current application UART, candidate/calibration checks and unresolved reset/ROM gate; no flashing. |
 | [Artoo STM32 firmware](artoo-stm32.md) | MCU responsibilities, source/tooling, build profiles and software/hardware acceptance. |
