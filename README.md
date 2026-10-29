@@ -9,6 +9,7 @@ Last updated: October 28, 2026. Both image targets were rebuilt and validated af
 | Guide | Purpose |
 |---|---|
 | [Project status and evidence](status-and-evidence.md) | Current controller baseline, artifact identity, validation coverage and remaining limits. |
+| [Yocto modernization audit](yocto-modernization-audit-20261028.md) | Astra review of current layers/BSP, source organization, release options and a gated Wrynose migration plan. |
 | [Workspace and source ownership](workspace-and-sources.md) | Repository locations, layer responsibilities, source pins and where changes belong. |
 | [Build and validation](build-and-test.md) | Repeatable WSL build commands, CPU settings, input verification and checks. |
 | [Board support](board-support.md) | Machine definitions, hardware format migration and unresolved controller/drone BSP work. |
