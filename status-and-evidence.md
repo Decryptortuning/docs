@@ -1,8 +1,10 @@
 # OpenSolo project status and validation evidence
 
-The latest local image candidate is the [Scarthgap refactor](scarthgap-refactor-20261028.md): controller/drone development and release builds pass the recorded offline/ARM checks, 82 relevant tests pass, and all four packaging repeats match byte for byte. Exact artifact copies are in [qualified-source9](/home/jresp/solo/recovery/scarthgap-refactor-20261028/qualified-source9). Source recovery and remaining hardware limits are recorded in that report. These images have not been flashed. The physical controller retains its older rootfs/overlay and qualified no-MSI kernel; Artoo remains unflashed.
+The current local candidate is [Maintenance A](scarthgap-maintenance-a-20261028.md), graph `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`. All four controller/drone development/release builds pass sixteen baseline image/initramfs/userspace/maintenance checks and four expanded ARM runtime suites. Packaging repeats match byte for byte, the independent SD-only cache regression passes, and a fresh 34-store restore plus both normal offline source-fetch closures and Pixhawk checksum controls pass. Exact copies are in [software-qualification-7055fbe57381](/home/jresp/solo/recovery/scarthgap-maintenance-a-20261028/software-qualification-7055fbe57381).
 
-The relocation tables and hashes below describe earlier preserved baselines. Use the new refactor report for current source/image qualification; use the Wi-Fi/serial reports for the physical controller's observed state.
+The CVE reports retain unresolved findings and mapping limits; the ledger distinguishes them from software test results. This is not a clean full rebuild, security clearance or hardware acceptance. One final ARM certificate fixture initially rejected a certificate after a backward WSL clock step; an unchanged strict retry passed, and both attempts are retained. No maintenance image or STM32 firmware was flashed. The physical controller retains its earlier rootfs/overlay and no-MSI kernel.
+
+[Source9](scarthgap-refactor-20261028.md) and the relocation tables below are preserved historical baselines. Use the maintenance ledger for current sources/artifacts, and the Wi-Fi/serial reports for observed physical-controller behavior.
 
 Current October 28 Wi-Fi/Artoo acceptance: [permanent PCIe kernel fix and two
 warm reboot results](controller-wifi-pci-20261028.md), plus [local bench/normal

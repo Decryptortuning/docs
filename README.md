@@ -1,10 +1,21 @@
 # OpenSolo modern port project documentation
 
-The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in Ubuntu WSL2. The preserved source9 development and release profiles passed offline image/initramfs/ARM checks, with repeatable cached-rootfs packaging. These results do not qualify the newer maintenance candidate. See the [Scarthgap refactor result](scarthgap-refactor-20261028.md) for exact pins, 82 relevant passing tests and remaining hardware limits. The working controller card has not been replaced by this refactor.
+The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in native Ubuntu WSL2. Maintenance A resumed after the WSL restart and completed local software qualification on October 29, 2026: four builds, sixteen image/initramfs/userspace/maintenance checks, four expanded ARM runtime suites, matching cached-rootfs packaging repeats and independent offline source recovery. The [maintenance ledger](scarthgap-maintenance-a-20261028.md) records exact sources, results and limits.
 
-Last updated: October 28, 2026. Maintenance A is paused at the user’s request; checkpoint commits were pushed and their remote revisions verified. The [pause and resume checkpoint](scarthgap-maintenance-a-pause-20261028.md) records the unqualified `7f9d2899…` candidate, completed host/metadata/patch checks and unfinished image/ARM work. The port stays on Scarthgap; Yocto 6 and license work are deferred. [WSL relocation verification](wsl-relocation-20261028.md) remains historical evidence.
+The current graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`. The CVE task closures completed against the recorded current NVD snapshot, but the security review retains findings and coverage gaps. OpenSSL 3.5.9 follow-up, retained kernel/media updates and remaining applicability work are documented in the ledger. Passing software checks does not establish security clearance, a clean full rebuild or hardware acceptance. The physical controller and STM32 installation are unchanged. New resume-fix commits are local and unpublished; the earlier pause checkpoint was pushed separately. Yocto 6 and license work remain deferred.
 
-## Last offline-qualified baseline (not flashed)
+## Current locally qualified artifacts
+
+Copies, validation reports and source/checker receipts are preserved in [software-qualification-7055fbe57381](/home/jresp/solo/recovery/scarthgap-maintenance-a-20261028/software-qualification-7055fbe57381). Ordinary build/deploy links select newer outputs when rebuilt; use these copies when identifying this candidate.
+
+| Profile | Preserved SD SHA-256 |
+|---|---|
+| Controller Development | `d5f8c4c6e4fde132852081d06cb0b4212cea94622e4515d31771337ea20ec2ec` |
+| Controller Release | `994d67c5cfec9a1d1c93e9fbcfd3b82e80b9ec46660ff036971b798cc06b6489` |
+| Drone Development | `524cd3d8ed1c68dd8bf80c3489027b8271060ae776079c0345e9b2667ce81291` |
+| Drone Release | `d1bf4b579b889c94de5eaa849184343ba096a6fc76414e5e249701afd8d7b686` |
+
+## Historical source9 baseline (not flashed)
 
 Source9 graph `36f841398e89201e2e462391cfa2779188349999090295c8b91c967f29380138`
 has four builds, sixteen image/initramfs/ARM checks, 82 relevant tests, matching
@@ -49,7 +60,7 @@ selected staged Artoo artifact has its own byte authority.
 | [Project roadmap](roadmap.md) | Next software work, hardware milestones and acceptance criteria. |
 | [Decisions and build history](decisions-and-history.md) | Integration decisions, completed milestones and how to maintain these guides. |
 
-For the paused maintenance candidate, start with the [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md). Use [Build and validation](build-and-test.md) for general commands. Use [Project status and evidence](status-and-evidence.md) to identify the verified image before a hardware session.
+For current maintenance results and follow-up work, start with the [maintenance ledger](scarthgap-maintenance-a-20261028.md). The [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md) preserves the earlier stop. Use [Build and validation](build-and-test.md) for general commands. Use [Project status and evidence](status-and-evidence.md) to identify the verified image before a hardware session.
 
 ## Local entry points
 

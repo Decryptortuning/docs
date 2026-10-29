@@ -1,5 +1,7 @@
 # Maintenance A pause and resume checkpoint — October 28, 2026
 
+**Historical checkpoint:** the user resumed after the WSL restart on October 29. Current results and exact final pins are in the [maintenance ledger](scarthgap-maintenance-a-20261028.md). This document retains the earlier paused graph, publication and resume instructions; it does not describe the current candidate.
+
 **Work is paused at the user's request. This is an unqualified source checkpoint.**
 The user authorized documentation updates, commits and pushes after the running
 build stopped. No new image is ready for flashing. Source implementation builds

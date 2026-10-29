@@ -186,3 +186,8 @@ contracts. A system hostname is not the DHCP client-name configuration. The
 platform package owns the udev mount-ignore list; there is no udev append.
 Module checks compare the release token and imported CRCs; they do not establish
 full vermagic/aliases/exported-CRC equivalence or physical board behavior.
+
+
+## Maintenance A image identity and qualification
+
+The October29 maintenance candidate uses graph/profile-based versioned image names, with stable deploy links retained. A build-ID-only change must invalidate rootfs, squashfs and SD signatures; do not repair stale identities by editing tmp/work or generated links. The [maintenance ledger](scarthgap-maintenance-a-20261028.md) records actual signature controls, SD-only cache reuse, four-profile packaging repeats and retained failures. These are cached-rootfs/dependency results, not a second clean toolchain build. Normal managed configurations are restored to CVE mode0 after the separately paired CVE report runs. Current CVE findings remain in the ledger.
