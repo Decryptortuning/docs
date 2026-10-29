@@ -1,5 +1,7 @@
 # Artoo power-hold reset and ROM tests — October 29
 
+**Latest physical MCU state:** [OpenSolo5 bench firmware installed](artoo-flash-result-20261029.md) after explicit authorization using temporary GPIO19/21 holds. Full readback/page127 preservation and settled exact-version/calibration/bridge checks pass; controls are released. Linux remains be98 plus its Chrony correction. Permanent BSP/updater power handling remains pending.
+
 **Temporarily restoring legacy GPIO19/21 output-high behavior prevented the i.MX restart.** The same guarded application reset passed, followed by ROM sync, identity, geometry, repeated bounded reads and return to the old application. Linux retained boot ID `ac525ce9-07bc-4cd4-80f8-fa48ac7ddc26` throughout both tests. No MCU programming occurred.
 
 This establishes a practical cause of the observed reset blocker: the missing legacy controller power-hold assertions matter on this board. Both were asserted together; their individual electrical roles and the rail waveform were not isolated. No negative reset was repeated without the holds, since three earlier unheld application/ROM attempts already restarted Linux. This passes the temporary diagnostic arrangement, not a corrected production updater or permanent BSP implementation.

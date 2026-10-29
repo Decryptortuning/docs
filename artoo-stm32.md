@@ -1,5 +1,7 @@
 # Artoo STM32 controller firmware
 
+**Latest physical MCU state:** [OpenSolo5 bench firmware installed](artoo-flash-result-20261029.md) after explicit authorization using temporary GPIO19/21 holds. Full readback/page127 preservation and settled exact-version/calibration/bridge checks pass; controls are released. Linux remains be98 plus its Chrony correction. Permanent BSP/updater power handling remains pending.
+
 **Latest boot-path test:** [automatic-update preflight](artoo-boot-preflight-20261029.md) reproduces the reset in actual rcS/S60 context. The one-shot guard prevented replay, the hook is restored, and MCU firmware/calibration are unchanged.
 
 **Latest reset work:** [October29 reset diagnosis](artoo-reset-diagnosis-20261029.md) isolates an active-reset-path failure even outside ROM mode. The controller recovered with its original firmware/calibration; no programming occurred. J2 console/electrical evidence is needed before another programming attempt.
