@@ -153,8 +153,7 @@ RWFS overlay. They are not embedded in the Yocto recipe, source lock or Git docs
 The October 29 preparation used the installed Wi-Fi helper and canonical templates,
 with matching base/config checksum markers and a successful next-boot merge check.
 It created a new on-card SSH host identity and installed the existing workstation
-administrator public key; its public host key is pinned locally. Physical boot and
-association for this fresh card remain pending. This profile is specific to this development card.
+administrator public key; its public host key is pinned locally. First physical boot, association, DHCP and authenticated SSH now pass for this fresh card; reboot/long-soak acceptance remains open. This profile is specific to this development card.
 
 The workstation SSH alias is:
 
@@ -167,7 +166,7 @@ controller host key. Password/keyboard-interactive SSH authentication is disable
 by the card's local drop-in. Existing authorized public keys are preserved.
 Private staging/evidence is under `/home/jresp/solo/.integration/controller-lan`.
 
-The root cause and earlier accepted kernel fix are documented in [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md). The newly prepared Maintenance A image includes the `pci=nomsi` policy with normal ath9k hardware crypto and no legacy diagnostic module override. Historical MSI/station-only experiments remain in their evidence directories. The October 29 card replaces the old rootfs/overlay; it has not yet booted in the controller. STM32 firmware is unchanged. See the maintenance ledger's card handoff for exact evidence.
+The root cause and earlier accepted kernel fix are documented in [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md). The newly prepared Maintenance A image includes the `pci=nomsi` policy with normal ath9k hardware crypto and no legacy diagnostic module override. Historical MSI/station-only experiments remain in their evidence directories. The October 29 card replaces the old rootfs/overlay; its first controller boot passes the scoped network/SSH checks. STM32 firmware is unchanged. See the maintenance ledger's card handoff for exact evidence.
 
 ## Candidate sequencing and offline development
 

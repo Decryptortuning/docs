@@ -2,7 +2,7 @@
 
 **Local software qualification completed after the user resumed on October 29, 2026.** The qualified graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`: four builds, sixteen baseline checks, four expanded ARM suites, 145 unique host cases in retained/relevant aggregate coverage, four byte-identical cached-rootfs packaging repeats, both-role identity-only signature controls and a real SD-only cache regression. Fresh source restoration and normal offline fetch closures pass. These are scoped software results, with unresolved CVE findings and coverage gaps described below; they do not establish a clean full rebuild, security clearance or hardware acceptance.
 
-The [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md) preserves the earlier `7f9d2899…` stop and eight-repository publication. New resume fixes are committed locally and remain unpublished. Historical source9 and earlier receipts/artifacts remain unchanged. The software qualification itself made no hardware or firmware promotion. The later authorized October 29 controller-card preparation is recorded below; first physical boot remains pending. Yocto 6, license work and broad W7 vendor/BSP/media migration remain deferred.
+The [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md) preserves the earlier `7f9d2899…` stop and eight-repository publication. New resume fixes are committed locally and remain unpublished. Historical source9 and earlier receipts/artifacts remain unchanged. The software qualification itself made no hardware or firmware promotion. The later authorized October 29 controller-card preparation is recorded below; first physical boot now passes the scoped Wi-Fi/SSH checks recorded below. Yocto 6, license work and broad W7 vendor/BSP/media migration remain deferred.
 
 Authority: the [consolidated plan](scarthgap-consolidated-improvement-plan-20261028.md), integration lock/build policy, and owned product/BSP layers. The prior owner Python upgrades are the preserved foundation: recovered Decryptortuning/PORT sources → source9 pins → these reviewed candidate commits/owned-layer patches. No fresh generic upstream/PyPI replacement discards that work. Apparent DroneKit version increases correct stale recipe labels on code already present.
 
@@ -21,7 +21,7 @@ The [180-unit update investigation](scarthgap-package-update-investigation-20261
 | W6 | Maintained libusb1.0.27/posix-ipc1.2 and stdlib monotonic replacement are installed. Actual ARM TLS/IPC/NumPy, retained-fork imports, FollowShot ROI and nine DroneKit/Solo/legacy-wire methods pass. | Full modern PyMAVLink version-floor compliance and hardware/throughput compatibility are not established. |
 | W7 | Separate vendor/BSP/media cohort remains deferred. | Retained kernel/NXP/media pins are not security-clear; drone capture/reset/routing and VPU/DMA/GPU/audio migration remain open. |
 | W8 | Four builds, sixteen baseline checks, four expanded ARM suites, 145-case host aggregate, packaging/signature/cache regressions and independent offline recovery completed. | Cached dependencies/rootfs were reused. One certificate-fixture failure after a WSL clock step passed an unchanged strict retry; both attempts remain evidence. CVE applicability has explicit residuals. |
-| W9 | User subsequently authorized controller bench preparation; the identified SD card is written, readback-verified and freshly provisioned. | Physical boot/network/serial acceptance remains pending. No STM32 flashing; no router settings changed. See the later card handoff below. |
+| W9 | User subsequently authorized controller bench preparation; the identified SD card is written, readback-verified and freshly provisioned. | First boot/Wi-Fi/SSH and serial identity pass; reboot/long-soak and broader serial acceptance remain pending. No STM32 flashing; no router settings changed. See the later card handoff below. |
 
 ## Exact maintenance sources and security exceptions
 
@@ -190,3 +190,34 @@ there are no automatically discoverable MCU firmware candidates or enable/force
 markers. No MCU ROM/programming operation occurred. The development firmware's
 normal idle shutdown remains until a separate Artoo bench deployment is selected.
 The software candidate's recorded security findings remain unresolved.
+
+### First fresh-image controller boot — Wi-Fi and SSH pass
+
+The user returned the prepared card to the controller and powered it on. The
+read-only check verified graph `7055fbe57381…`, OpenSolo 5 development, LATEST boot,
+`pci=nomsi`, normal ath9k hardware crypto (`use_msi=0`, `nohwcrypt=0`) and increasing
+legacy ath9k interrupts. OpenWrt confirms authenticated/authorized association and
+DHCP `192.168.2.207` for MAC `88:dc:96:3b:aa:30`. The ordinary
+`ssh opensolo-controller` alias resolves and authenticates with the pinned new host
+key and existing administrator key. Initial hostname/SSH attempts preceded network
+startup; subsequent connections succeed without disabling strict checking.
+
+Byte-exact 1 MiB memory-only SSH transfers pass in both directions, without target
+file writes. The recorded observation retains one boot ID, a stable association
+and zero ath9k reset/watchdog/timeout counters. The final capture is at uptime
+138.82 seconds. No reboot or prolonged soak was requested or performed.
+
+Startup logs identify STM32 hardware3 and firmware `OpenSolo-4dev` over the opened
+`/dev/ttymxc1` bridge. The updater reports no new firmware. The user's LCD reads
+“Controller updated”; the user was instructed to press A to dismiss it. No STM32
+programming, controller configuration write, clock change or router change was
+performed during these checks.
+
+Nonblocking startup follow-ups remain: the controller clock is still at the build
+time baseline, the serial-console getty logs controlling-TTY warnings, and the
+expected dedicated `/log/3dr-stm32.log` is absent while STM32 messages are present
+in `/log/messages`. These were recorded, not repaired in this read-only session.
+This qualifies the scoped first boot/network/SSH and MCU identification, not
+blank-card provisioning, drone pairing/video, flashing or flight behavior.
+
+[Read-only boot result](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/boot-check-20261029T142858Z/result.json) and its adjacent controller/router captures retain exact evidence.
