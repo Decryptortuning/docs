@@ -6,6 +6,8 @@ The CVE reports retain unresolved findings and mapping limits; the ledger distin
 
 The [card receipt](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/card-complete.json) records the exact target and result. Offline provisioning changes the partition table and settings after the initial full-image readback; the final card is not claimed to retain the source SD image's whole-file hash. It also means this session has not tested the controller's blank-card first-boot provisioning path. No old overlay programs or settings were restored.
 
+The subsequent [October29 live Linux audit](controller-optimization-audit-20261028.md#october-29-fresh-image-runtime-audit) confirms active dual-stack LAN filtering, working real-time bridge threads and useful standby CPU/RAM/thermal headroom. It identifies a proven custom-logger/glibc fortify boundary defect, ineffective requested rotation substitutions, absent external clock synchronization, console session ownership errors and an inactive hardware watchdog. GPU pool and thread-stack reductions require loaded measurements. The user confirmed idle power-down after an orderly DHCP release at14:39:40 UTC; the last live ath9k reset counters are zero. The read-only audit changed no live configuration and does not qualify paired/video behavior.
+
 [Source9](scarthgap-refactor-20261028.md) and the relocation tables below are preserved historical baselines. Use the maintenance ledger for current sources/artifacts, and the Wi-Fi/serial reports for observed physical-controller behavior.
 
 Current October 28 Wi-Fi/Artoo acceptance: [permanent PCIe kernel fix and two

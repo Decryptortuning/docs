@@ -221,3 +221,11 @@ This qualifies the scoped first boot/network/SSH and MCU identification, not
 blank-card provisioning, drone pairing/video, flashing or flight behavior.
 
 [Read-only boot result](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/boot-check-20261029T142858Z/result.json) and its adjacent controller/router captures retain exact evidence.
+
+### Live Linux audit follow-up
+
+The user then requested a broader running-Linux review. The [dated runtime audit](controller-optimization-audit-20261028.md#october-29-fresh-image-runtime-audit) and [raw read-only evidence](/home/jresp/solo/.integration/controller-linux-audit-20261029T143240Z) distinguish the actual Maintenance A image from the historical October28 baseline. No new source candidate, build, live settings change, device/serial/watchdog write or firmware operation occurred.
+
+Highest-value next work is the demonstrated fortified/custom logger split, actual BusyBox rotation installation, a real network-time source and getty session ownership; hardware-watchdog ownership and measured GPU/stack reductions follow with appropriate bench gates. Current dual-stack management firewall, key-only access, AP service gating, normal ath9k interrupts/crypto and real-time bridge threads are working. Six approximately8 MiB anonymous worker mappings and the128 MiB GPU pool are measured opportunities, not proven reclaimable margins under video. Existing CVE findings remain open.
+
+The last good live capture is uptime594.1 seconds of the same boot, with zero ath9k resets and increasing serial counters. OpenWrt logs DHCP release/disconnect at14:39:40 UTC, about11 minutes after association; the user confirms the controller powered down itself. No repeated reconnect or driver hang was observed in that interval. The controller is now off; repeat boot and longer loaded acceptance remain pending.

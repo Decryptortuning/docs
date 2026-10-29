@@ -1,5 +1,7 @@
 # Controller optimization and reliability audit — 2026-10-28
 
+**Current follow-up:** the [October 29 fresh-image runtime audit](#october-29-fresh-image-runtime-audit) below records the deployed Maintenance A image. The October 28 observations are historical; several of their defects are now fixed.
+
 This is a read-only assessment of the current Scarthgap controller port. The best next work is to correct several integration defects and make the development/flight profiles explicit, then measure memory and media behavior. There is no evidence supporting a blanket performance governor, a PREEMPT_RT conversion, aggressive VM tuning, or removing media support now.
 
 **The auditing agent implemented no changes.** No services were restarted, no device was flashed, no router configuration was changed, and no build, stress test, benchmark, reboot, card backup, UART open, GPIO change, or package installation was performed. The only new persistent local artifact is this report. Existing source, generated build inputs, lock pins and the dirty `build-env.md` were preserved.
@@ -196,3 +198,207 @@ Still unmeasured: representative paired/flight runlevel behavior; HDMI element a
 ## Report preservation
 
 The pre-existing `build-env.md` remained untouched; its inspected SHA-256 was `b32bd9c481fab728573c3c65cb0928780d6c88a8b68474e702ae3fe158c577db`. This standalone report is uncommitted. No source lock was advanced. Recommendations require user approval before implementation on source/build inputs or the controller.
+
+## October 29 fresh-image runtime audit
+
+The controller is functioning well in standby, but there are concrete correctness
+and reliability fixes left. This pass inspected the actual newly installed image,
+not the older overlay used for the October 28 audit. It changed no controller or
+router configuration, services, kernel settings, clock, firmware or hardware.
+There was no stress test, UART open, watchdog open, reboot or package install.
+Workstation-only evidence and documentation were written.
+
+### Identity and observation limits
+
+- Running graph: `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`, OpenSolo 5 development.
+- Kernel: `6.6.52-lts-next-ge0f9e2afd4cf`, LATEST boot, `pci=nomsi`, one online CPU.
+- Boot ID: `f8c09a1a-018c-4fb6-b193-3bf1494c57dd`; saved live captures include uptimes 356.8–594.1 seconds of that same boot.
+- Source heads remain integration `6adb5e6`, product `ad893d0`, BSP `1602ee5`, SoloLink `cd3ff3c`; no application/layer sources or lock inputs changed.
+- Evidence: [audit gate and captures](/home/jresp/solo/.integration/controller-linux-audit-20261029T143240Z). Sensitive filesystem contents, Wi-Fi passwords and private keys were not collected.
+- Target wall time is about nineteen hours behind the workstation/router. Correlate boot ID and uptime; target log timestamps are not trustworthy UTC.
+
+OpenWrt recorded one association at 14:28:39 UTC and an orderly DHCP release plus
+disconnect at 14:39:40 UTC. The user confirmed the controller powered down on its
+own. This fits the existing idle shutdown; the last live sample has zero ath9k
+reset counters. Do not classify this disconnect as a reproduced driver hang.
+The blank-card provisioning path, repeated reboot/long soak, runlevel 4, pairing,
+video, audio accessories and flight remain outside this audit.
+
+### Healthy or deliberately retained behavior
+
+| Area | Actual observation | Assessment |
+|---|---|---|
+| CPU and thermal | Ondemand, 396/792/996 MHz; sampled residency 32,031/779/2,569 ticks, about 90.5% at the lowest frequency; 47.8–50.0°C during SSH reads. | Keep current governor and thermal controls. No measured CPU bottleneck or reason for permanent maximum frequency. |
+| Scheduling | PREEMPT, HZ100, seven bridge threads; upstream/downstream are actually SCHED_FIFO priorities60/56. | Existing real-time policy is active. No priority/RT-budget change is justified by standby reads. |
+| RAM | 498,108 KiB visible; about179.6 MiB available at the main capture; no swap or observed OOM. | Useful standby headroom; paired/video peaks are still unknown. |
+| Wi-Fi | Station-only, about−24 to−29 dBm in network captures, power save off, normal hardware crypto, legacy IRQs increasing, zero resets/timeouts at last read. | Previous MSI regression is absent in this boot. No channel, crypto or PCI change is warranted here. |
+| Access | Existing key authenticates; root and sololog have unusable password markers, no empty password; sshd requires publickey, password/keyboard-interactive off. | Fresh provisioning is effective. sololog retains its forced receiver command and DisableForwarding; root forwarding is an administrator capability, not evidence of an authentication bypass. |
+| Firewall | Both IPv4 and IPv6 have the wlan0 management chain with established traffic, SSH, DHCP, ICMP and mDNS allowed, then DROP. Forwarding is off. | The older missing-filter-support finding is fixed. Bridge TCP5016/5021 listeners bind all IPv4 addresses, but inspected wlan0 rules block unsolicited access; no negative connection test or flight-path acceptance was run. |
+| Storage | Boot and SquashFS are read-only; RWFS about84.4 MiB free; LOG about6.4 GiB free; mq-deadline/128 KiB readahead. | Current capacity/use is healthy. SquashFS showing100% is expected for the immutable image. No swap, scheduler or journal change is indicated. |
+| Service policy | Runlevel3; AP-disabled pairing wrapper waits quietly. Video/app/telemetry services assigned to runlevel4 are inactive. | Expected standby behavior, not missing daemons. Hostapd's unprovisioned-AP message is expected for this station-only card. |
+| i.MX–MCU | Only the running bridge owns `/dev/ttymxc1`; RX rises457,045→795,456 bytes and TX1,291→2,239 between captures. Regular packet summaries continue. | Actual two-way communication is present. Artoo reports hardware3 / OpenSolo-4dev; no ROM/programming test was performed. |
+| Entropy | CRNG initialized at about11.2s and later entropy count256. | The earlier jitterentropy initialization warning does not establish entropy failure. Keep the working randomness sources. |
+
+The [kernel CPUFreq documentation](https://docs.kernel.org/admin-guide/pm/cpufreq.html)
+describes the power/performance tradeoff; the local measurements support retaining
+ondemand. CMA/GPU and stack figures below are candidates for measured reductions,
+not an instruction to alter live reservations.
+
+### R01 — fix the fortified/custom C logger boundary first
+
+This is a newly traced root cause beyond the earlier generic logging follow-up.
+`stm32.cpp` calls `openlog(..., LOG_LOCAL0)`, and the binary defines its own
+`openlog`, `syslog`, `vsyslog`, `closelog` and `setlogmask` from the legacy utility.
+The build uses `_FORTIFY_SOURCE=2`. The exact deployed binary also imports glibc
+`__syslog_chk`; Thumb disassembly shows the startup sequence calling custom
+`openlog` at `0xa9f0`, then glibc `__syslog_chk` through `0x2778`.
+
+The custom initialization and libc logging therefore use different internal
+state. Runtime bridge messages arrive as `user.info`, while the product route
+expects `local0` and `/log/3dr-stm32.log` is absent. Temperature and Python updater
+facilities do route, so the active syslog configuration is not wholly disconnected.
+glibc documents [fortified call substitution, including syslog](https://sourceware.org/glibc/manual/latest/html_node/Source-Fortification.html).
+The specific cross-library state mismatch is established by our source/binary/runtime
+evidence, not asserted by that general documentation.
+
+This also bypasses the custom logger's intended nonblocking/drop-accounting path.
+No blocking-induced control delay was reproduced; that risk needs a bounded
+saturated-log-socket test. The fix should use a distinct OpenSolo logging API
+consistently, with compiler format checking and the nonblocking contract retained,
+rather than disabling compiler hardening or globally interposing libc names.
+Review every owned consumer of this utility and the real-time call sites together.
+
+The live `/usr/bin/stm32` SHA256 is
+`356830f47fa2af8616e1c8e72bcef5b56ff145b3ede49d8c4c46c1f76fd539c5`,
+identical to the inspected image binary. Adjacent `stm32-logging-symbols.txt`,
+`stm32-logging-calls.txt` and `fortify-build-command.txt` preserve the proof.
+Owners: SoloLink `flightcode/util/syslog.c` and its C/C++ callers; product recipe pin.
+
+### R02 — make the requested log rotation settings effective
+
+The installed `/etc/syslog-startup.conf` still has commented ROTATESIZE and
+ROTATEGENS. The owned BusyBox append's substitutions match only uncommented keys,
+but the selected core file has `#ROTATESIZE=0` / `#ROTATEGENS=3`. Consequently
+the daemon command line is `/sbin/syslogd -n -O /log/messages`, with no requested
+`-s 2048 -b 3`.
+
+The selected BusyBox build has rotation enabled and its source defaults to200 KiB
+and one generation; do not describe logging as unbounded from absent arguments alone.
+The intended retention contract is nevertheless not installed. Replace or
+normalize the actual selected config robustly, and test the real install boundary
+with commented upstream inputs. Verify all facility files plus direct appenders,
+rotation ownership and disk-full handling on the resulting image.
+Owner: `meta-3dr/recipes-core/busybox/busybox_1.36.1.bbappend`.
+
+### R03 — provide a trustworthy time source without blocking offline boot
+
+The timestamp-format/persistence repair is deployed: the saved checkpoint has14
+digits, and one managed daemon checkpoints it each minute. That preserves a time
+floor but cannot learn current time. The live RTC reads January1,1970; system time
+advances from the image/build floor. No standalone ntpd/chronyd/sntp command was
+found, and no external synchronization was observed.
+
+Add a small explicitly configured network-time client when a trusted network is
+available, while retaining monotonic offline startup and the saved floor. Review
+clock-step effects on telemetry/logging and TLS before selecting startup-only
+steps versus later discipline. Never weaken certificate validation to hide wrong
+time. Do not assume the router serves NTP without checking its configuration.
+Owners: product package/service policy and SoloLink clock/timestamp consumers.
+
+### R04 — correct console session ownership
+
+The NXP `rc_mxc.S` wrapper is session/group leader PID571, but launches getty as
+child577 without `exec`. The getty remains in SID/PGID571. The installed util-linux
+agetty attempts TIOCSCTTY and logs the observed EPERM / process-group warnings.
+This is a concrete console recovery defect, not an SSH failure or a proven
+respawn storm: the observed getty PID stays stable.
+
+Use an owned controller console definition that executes getty as the init child,
+preserving the intended console session. Keep console UART0 separate from the
+MCU-owned UART1; the inherited wrapper's generic console guessing should not
+grant UART1 to getty on this product. Validate terminal ownership and actual
+console login separately from SSH. Owner: product sysvinit-inittab override;
+vendor sources stay immutable.
+
+### R05 — close the Linux watchdog ownership gap deliberately
+
+The imx2+ watchdog is exposed and reports `state=inactive`, `timeout=60`,
+`nowayout=0`, `bootstatus=0`. No process owns a watchdog descriptor. This improves
+observability over the October28 configuration, but does not supply automatic
+Linux hang recovery. STM32 power/idle behavior is a separate mechanism.
+
+Select a single watchdog owner with health criteria that include required product
+services, then qualify boot, maintenance/update duration, shutdown and recovery on
+the bench. Do not arm it merely to remove an audit finding. No watchdog device
+was opened during this pass.
+
+### R06 — measure GPU/CMA and thread stacks under the supported workload
+
+The GPU reports a128 MiB system pool with only18,448 bytes used in standby. CMA is
+320 MiB, with about92.5 MiB free in the main capture. The pools/accounting may
+overlap; do not add them and claim448 MiB reclaimable. Attribute allocation peaks
+under video/HDMI start, resolution changes, buffering and repeated restart before
+selecting smaller device-tree/driver reservations.
+
+The bridge has about51.6 MiB RSS and53.5 MiB VmLck. Its maps contain six large
+anonymous areas around8 MiB each, consistent with the six worker stacks; exact
+stack use still requires high-water measurement. Keep mlock and FIFO priorities;
+measure and bound thread stacks with a conservative worst-case margin before
+reducing them. Neither standby mappings nor successful imports prove safe smaller
+stacks. Owners: BSP graphics/memory policy and SoloLink thread construction.
+
+### R07 — minor write-policy and update-capacity follow-ups
+
+The vendor `rc_gpu.S` deletes and recreates image-owned OpenVG selection symlinks
+at boot. The fresh overlay consequently gains `/usr/lib` entries; Python also
+creates bytecode entries. This is not evidence that the previous overlay was
+restored. Prefer deterministic board-selected library packaging, or an idempotent
+startup selection if it must remain dynamic; verify actual graphics consumers.
+The current one-minute timestamp writes are intentional, not the old ten-second
+bug. A further durability/write-frequency change needs an explicit policy.
+
+LATEST has about17.9 MiB filesystem free. Its176,160,768-byte partition exceeds
+the current157,200,355-byte payload plus the maintenance16 MiB headroom requirement
+by only2,183,197 bytes. The current image fits; future package/kernel growth can
+trip the deliberate capacity guard. Plan both-slot geometry before a larger
+maintenance cohort rather than weakening the guard or silently resizing this card.
+
+Other observed vendor warnings include USB dummy supplies and early HDMI-audio
+probe ordering. A later ALSA HDMI card exists, so that early error alone does not
+prove final audio failure. USB gadget configuration is empty and its UDC is not
+attached; no USB export or audio/video functionality was exercised. These remain
+hardware/peripheral qualification items, not grounds for deleting support.
+
+### Recommended next batch and acceptance
+
+1. Fix R01 logger ownership/fortify interaction and R02 actual log-rotation install
+   semantics together. Qualify a full logging call path with real compiler flags,
+   correct facilities, full-queue nonblocking behavior and bounded retention.
+2. Fix R03 time-source integration and R04 console ownership in owned sources,
+   preserving offline boot, role selection, UART isolation and fresh access policy.
+3. Coordinate R05 watchdog policy with the existing power/maintenance lifecycle.
+   Retain the current normal MCU idle behavior until a separately selected bench
+   firmware deployment; do not use an update-screen hold as a substitute.
+4. Complete the already documented glibc/OpenSSL maintenance and other scoped
+   security follow-ups in the ledger. Working SSH/firewall and this audit do not
+   clear the existing source/CVE findings.
+5. After related source changes settle, pin a new combined candidate and record
+   a new source/consumer gate. Build/validate both roles and profiles as warranted;
+   include actual installed configuration checks, not source-text checks alone.
+   Deploy only an explicitly selected candidate, then test boot/reboot, longer
+   networking observation, actual serial console and product state transitions.
+6. Measure video/control latency, GPU/CMA peaks and stack high-water before R06
+   tuning. Keep governor, VM, I/O and real-time policy unchanged without a measured
+   deficit. Yocto6 and license work remain deferred.
+
+The controller powered down before a final additional read; that failed read and
+the router's orderly release are preserved. No claim of a completed long soak,
+reboot acceptance, full paired operation or an ideally configured production
+system follows from this audit. The new section and its local commit supersede
+the October28 report-creation note about being uncommitted; historical findings
+and receipts remain intact.
+
+Probe limits are retained in stderr: this image lacks PSI files and tune2fs,
+and its BusyBox df/netstat omit some host-style options. Replacement procfs and
+supported-command observations were used where available. Missing instrumentation
+is not a zero-pressure result, and no mounted-filesystem fsck was attempted.

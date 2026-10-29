@@ -49,6 +49,7 @@ selected staged Artoo artifact has its own byte authority.
 | [Workspace and source ownership](workspace-and-sources.md) | Repository locations, layer responsibilities, source pins and where changes belong. |
 | [Build and validation](build-and-test.md) | Repeatable WSL build commands, CPU settings, input verification and checks. |
 | [Board support](board-support.md) | Machine definitions, hardware format migration and unresolved controller/drone BSP work. |
+| [Live controller Linux audit](controller-optimization-audit-20261028.md#october-29-fresh-image-runtime-audit) | October29 fresh-image measurements, logger/rotation/time/console/watchdog findings and the next bounded improvement batch. |
 | [Python 3 compatibility](python3-compatibility-20261028.md) | Reviewed source scope, updater safety fixes, Python 3.12 regression coverage and deployment limits. |
 | [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md) | PCIe interrupt root cause, permanent kernel policy, module compatibility and reboot acceptance. |
 | [Artoo bench idle option](artoo-bench-idle-20261028.md) | Local idle-only development profile, all-six builds and normal/bench Renode qualification. |
