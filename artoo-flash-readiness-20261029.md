@@ -1,5 +1,7 @@
 # Artoo serial link and flashing readiness — October 29
 
+**Later automatic-path test:** [one-shot boot preflight](artoo-boot-preflight-20261029.md) also restarted Linux during loader initialization. Its recovery skip guard worked, the original hook was restored and firmware/calibration remain unchanged; no flashing occurred.
+
 **Subsequent authorized diagnostics:** [reset diagnosis](artoo-reset-diagnosis-20261029.md) reproduces the i.MX restart in application mode and with ROM requested. No flashing occurred; exact electrical cause remains unresolved. The earlier non-disruptive readiness observations below retain their original scope.
 
 The running i.MX–STM32 application link passes the scoped check. **Flashing is not yet cleared:** the reset/ROM-entry path previously restarted Linux and has not completed a successful ROM identification/readback cycle. No MCU reset, GPIO change, bootloader entry, bridge stop, target file installation, erase, write, unprotect or flash was performed in this session.

@@ -1,5 +1,7 @@
 # Artoo reset diagnosis — October 29
 
+**Later automatic-path test:** [one-shot boot preflight](artoo-boot-preflight-20261029.md) also restarted Linux during loader initialization. Its recovery skip guard worked, the original hook was restored and firmware/calibration remain unchanged; no flashing occurred.
+
 The authorized diagnostic round reproduced the i.MX restart with a normal application reset, then with a shorter requested pulse and with ROM mode requested. **No MCU erase, write, protection change or flashing occurred.** The controller recovered after each attempt. The final observed MCU remains OpenSolo-4dev, with the same factory parameter record and a normal single bridge owner.
 
 The failure is now isolated more narrowly than the earlier ROM preflight: inactive-low BOOT0/reset preparation succeeds, and Linux restarts after the active reset transition is attempted. It does not require ROM selection, a UART parity change, a new serial open, stopping the bridge or programming. The exact electrical/software reset mechanism is not yet established. In particular, a different supply has not been shown to solve it.

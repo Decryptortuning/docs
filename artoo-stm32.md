@@ -1,5 +1,7 @@
 # Artoo STM32 controller firmware
 
+**Latest boot-path test:** [automatic-update preflight](artoo-boot-preflight-20261029.md) reproduces the reset in actual rcS/S60 context. The one-shot guard prevented replay, the hook is restored, and MCU firmware/calibration are unchanged.
+
 **Latest reset work:** [October29 reset diagnosis](artoo-reset-diagnosis-20261029.md) isolates an active-reset-path failure even outside ROM mode. The controller recovered with its original firmware/calibration; no programming occurred. J2 console/electrical evidence is needed before another programming attempt.
 
 **Latest physical readiness:** [October29 serial/flash review](artoo-flash-readiness-20261029.md) passes the live application UART and candidate/tool/calibration checks. Reset/ROM entry remains unqualified; no STM32 flash has occurred. Battery-only power is not established as the cause of the prior restart.
