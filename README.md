@@ -4,6 +4,28 @@ The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux
 
 Last updated: October 28, 2026. The current local refactor stays on Scarthgap; Yocto 6 and license work are deferred. [WSL relocation verification](wsl-relocation-20261028.md) remains historical evidence.
 
+## Last offline-qualified baseline (not flashed)
+
+Source9 graph `36f841398e89201e2e462391cfa2779188349999090295c8b91c967f29380138`
+has four builds, sixteen image/initramfs/ARM checks, 82 relevant tests, matching
+cached-rootfs packaging repeats and 34 independently restored Git stores.
+This is not a clean full rebuild, comprehensive CVE review or hardware acceptance.
+The physical controller still uses its older rootfs/overlay and no-MSI kernel.
+
+| Profile | Preserved SD SHA-256 |
+|---|---|
+| Controller development | `a9c23f81afa8a1d412b08d791d055601d74b831a925f69e2ea2249f197cb0660` |
+| Controller release | `0d57c450cac9165ba34ad913b14870176194ebc8776ad4ce6b12e0fffb5861f3` |
+| Drone development | `f95be255ba4bb63da5908d6bea2ba9e385b98b9becdc1be5bd01a422c6926e1e` |
+| Drone release | `b106bb4e2cc2d29a3bdf851c1a8d932d1a4bbd1ce7855dad4497cb0a951491f7` |
+
+[Source9 result](scarthgap-refactor-20261028.md), [implementation plan](scarthgap-consolidated-improvement-plan-20261028.md)
+and [current maintenance ledger](scarthgap-maintenance-a-20261028.md) are separate authorities.
+OpenSolo names the project; OPenSolo_2 is its integration repository. meta-solo-bsp
+is active; meta-solo is inactive inventory. `build_input:false` lock entries are
+unchecked provenance inventory, including docs, scripts and Artoo source; the
+selected staged Artoo artifact has its own byte authority.
+
 ## Project guides
 
 | Guide | Purpose |

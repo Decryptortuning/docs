@@ -1,6 +1,6 @@
 # OpenSolo project status and validation evidence
 
-The latest local image candidate is the [Scarthgap refactor](scarthgap-refactor-20261028.md): controller/drone development and release builds pass full offline/ARM qualification, 82 relevant tests pass, and all four packaging repeats match byte for byte. Exact artifact copies are in [qualified-source9](/home/jresp/solo/recovery/scarthgap-refactor-20261028/qualified-source9). Source recovery and remaining hardware limits are recorded in that report. These images have not been flashed. The physical controller retains its older rootfs/overlay and qualified no-MSI kernel; Artoo remains unflashed.
+The latest local image candidate is the [Scarthgap refactor](scarthgap-refactor-20261028.md): controller/drone development and release builds pass the recorded offline/ARM checks, 82 relevant tests pass, and all four packaging repeats match byte for byte. Exact artifact copies are in [qualified-source9](/home/jresp/solo/recovery/scarthgap-refactor-20261028/qualified-source9). Source recovery and remaining hardware limits are recorded in that report. These images have not been flashed. The physical controller retains its older rootfs/overlay and qualified no-MSI kernel; Artoo remains unflashed.
 
 The relocation tables and hashes below describe earlier preserved baselines. Use the new refactor report for current source/image qualification; use the Wi-Fi/serial reports for the physical controller's observed state.
 
@@ -11,7 +11,7 @@ STM32 firmware remains unflashed. Earlier image receipts below retain their
 original scope and identity.
 
 
-As of October 28, 2026, both controller and drone images build and pass image/initramfs validation on this WSL host. The controller also passes 26 maintenance fault tests and ARM userspace/utility checks. The drone media pipeline and current physical board behavior remain unverified. See the [WSL relocation verification](wsl-relocation-20261028.md) for the latest build scope and source fix.
+As of October 28, 2026, both controller and drone images build and pass image/initramfs validation on this WSL host. The controller also passes 26 maintenance fault tests and ARM userspace/utility checks. The drone media pipeline and current physical board behavior remain unverified. See the [WSL relocation verification](wsl-relocation-20261028.md) for that historical build scope and source fix.
 
 ## Earlier relocation validation coverage
 
@@ -32,7 +32,7 @@ As of October 28, 2026, both controller and drone images build and pass image/in
 | Physical reset gesture and early board GPIO sequencing | Open | Legacy behavior was omitted during the port. |
 | Clean rebuild and bit-for-bit reproducibility | Open | Successful incremental/cache-based builds do not establish a full clean rebuild; `/VERSION` still contains wall-clock build content. |
 
-## Verified controller baseline
+## Historical verified controller baseline
 
 At the preserved relocation baseline, the `meta-3dr` revision was `2f5bee6a16480dcea72e00d733d423f13d19ac82`; the BSP revision is `cfae891da533653a1a82d69499370d968934a035`. The controller artifacts were regenerated at `a4aa5bc54758835216dfe57b33d1771bc208483b` and verified unchanged by a successful build at the final product revision. The intervening change enables the requested drone KMS package and isolates its architecture. Each preserved artifact set has its exact build inputs and source lock.
 

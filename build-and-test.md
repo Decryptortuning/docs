@@ -45,7 +45,7 @@ python3 scripts/smoke-maintenance.py \
 
 The image validator's `--baseline` option relaxes deployment-link and DHCP checks for old saved images. Use the full checks for new output. Validation success describes the checks above; physical boot, radio, pairing and peripheral acceptance remain in the [roadmap](roadmap.md).
 
-Working report files may be overwritten. Preserve an accepted artifact set with its source lock, build source record and validation reports before further source changes. The [current verified snapshot](status-and-evidence.md#verified-controller-baseline) already includes these records.
+Working report files may be overwritten. Preserve an accepted artifact set with its source lock, build source record and validation reports before further source changes. The [current verified snapshot](scarthgap-refactor-20261028.md) already includes these records.
 
 ## Configure the drone
 
@@ -165,3 +165,24 @@ by the card's local drop-in. Existing authorized public keys are preserved.
 Private staging/evidence is under `/home/jresp/solo/.integration/controller-lan`.
 
 The subsequent root cause and accepted kernel fix are documented in [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md). The development controller now uses the validated `pci=nomsi` kernel. Historical MSI/station-only experiments remain in their evidence directories; they are not the current radio policy. This card retains its older rootfs and local overlay until a separately planned hardware cutover. The Scarthgap refactor and source-recovery tests do not change its network settings or firmware.
+
+## Candidate sequencing and offline development
+
+Finish related edits, commit and pin all inputs, then review actual producers and
+consumers before running tests, configure checks, parsing or builds. Source9 offline
+acceptance is complete for its graph; each repinned candidate needs new identities.
+
+Restored repositories intentionally have detached HEADs. To develop, inspect local
+branches, then deliberately create the recipe branch at its locked commit using
+`git switch -c <branch> <locked-commit>`. If it exists, inspect it; never force-move
+it. Update recipe, checkout inventory and recipe_sources branches together. Explicit
+`workspace.py seed` makes committed local changes available without a push.
+Bundle origins remain valid offline. Adding a network origin is an explicit later
+development choice, not a prerequisite for restore; the same applies to mirrors.
+Git transport closure does not imply archive closure or network-free fetching.
+
+SSH host/admin/transfer identities and Wi-Fi pairing are separate provisioning
+contracts. A system hostname is not the DHCP client-name configuration. The
+platform package owns the udev mount-ignore list; there is no udev append.
+Module checks compare the release token and imported CRCs; they do not establish
+full vermagic/aliases/exported-CRC equivalence or physical board behavior.

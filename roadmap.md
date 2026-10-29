@@ -23,11 +23,11 @@ qualification. Physical acceptance remains separate.
 | Artoo handoff | Yocto stages the selected immutable candidate and manifest under `/firmware/candidates`, outside the automatic updater's `/firmware/artoo_*.bin` search. Native firmware and software-model evidence remain distinct from device programming authority. |
 | Recovery checks | Existing partition/update failure handling is retained, with both-role fault scenarios and ARM userspace/utility checks available. Do not reinterpret earlier successful tests as results for newly changed sources. |
 
-## Offline acceptance of the combined candidate
+## Future candidate offline acceptance (source9 complete)
 
 After related components are frozen, pin and review the complete producer and
 consumer contract before tests/builds. Record provider/append closure, effective
-kernel fragments, module release/vermagic/CRC alignment and actual board DTBs.
+kernel fragments, module release-token/imported-CRC alignment and actual board DTBs.
 Run image/initramfs checks against the selected development or release build,
 never the other profile's kernel or rootfs. Check compiled environment failure
 branches, exact packaged hashes, deterministic metadata, staged Artoo isolation,
