@@ -141,8 +141,8 @@ Build logs are saved under `/home/jresp/solo/.integration/logs`, alongside `.sou
 
 ## Local controller LAN and SSH profile
 
-The current development card has station mode enabled and its SoloLink Wi-Fi AP
-disabled, at the owner’s request, to isolate LAN bring-up on the shared radio.
+The development card prepared on October 29 has fresh station mode settings and
+its SoloLink Wi-Fi AP disabled, at the owner’s request, to isolate LAN bring-up on the shared radio.
 Controller application services remain enabled. LAN DHCP uses hostname
 `opensolo-controller`; the system hostname remains `3dr_controller` because
 existing role-selection scripts depend on it.
@@ -150,8 +150,11 @@ existing role-selection scripts depend on it.
 OpenWrt supplied the WLAN configuration through the existing read-only router SSH
 alias. Credentials live only in private workstation staging files and the card's
 RWFS overlay. They are not embedded in the Yocto recipe, source lock or Git docs.
-The controller config checksum sidecars were updated so configinit preserves the
-changes on reboot. This profile is specific to this development card.
+The October 29 preparation used the installed Wi-Fi helper and canonical templates,
+with matching base/config checksum markers and a successful next-boot merge check.
+It created a new on-card SSH host identity and installed the existing workstation
+administrator public key; its public host key is pinned locally. Physical boot and
+association for this fresh card remain pending. This profile is specific to this development card.
 
 The workstation SSH alias is:
 
@@ -164,7 +167,7 @@ controller host key. Password/keyboard-interactive SSH authentication is disable
 by the card's local drop-in. Existing authorized public keys are preserved.
 Private staging/evidence is under `/home/jresp/solo/.integration/controller-lan`.
 
-The subsequent root cause and accepted kernel fix are documented in [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md). The development controller now uses the validated `pci=nomsi` kernel. Historical MSI/station-only experiments remain in their evidence directories; they are not the current radio policy. This card retains its older rootfs and local overlay until a separately planned hardware cutover. The Scarthgap refactor and source-recovery tests do not change its network settings or firmware.
+The root cause and earlier accepted kernel fix are documented in [Controller Wi-Fi kernel fix](controller-wifi-pci-20261028.md). The newly prepared Maintenance A image includes the `pci=nomsi` policy with normal ath9k hardware crypto and no legacy diagnostic module override. Historical MSI/station-only experiments remain in their evidence directories. The October 29 card replaces the old rootfs/overlay; it has not yet booted in the controller. STM32 firmware is unchanged. See the maintenance ledger's card handoff for exact evidence.
 
 ## Candidate sequencing and offline development
 

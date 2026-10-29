@@ -2,7 +2,7 @@
 
 **Local software qualification completed after the user resumed on October 29, 2026.** The qualified graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`: four builds, sixteen baseline checks, four expanded ARM suites, 145 unique host cases in retained/relevant aggregate coverage, four byte-identical cached-rootfs packaging repeats, both-role identity-only signature controls and a real SD-only cache regression. Fresh source restoration and normal offline fetch closures pass. These are scoped software results, with unresolved CVE findings and coverage gaps described below; they do not establish a clean full rebuild, security clearance or hardware acceptance.
 
-The [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md) preserves the earlier `7f9d2899…` stop and eight-repository publication. New resume fixes are committed locally and remain unpublished. Historical source9 and earlier receipts/artifacts remain unchanged. No hardware or firmware promotion occurred. Yocto 6, license work, broad W7 vendor/BSP/media migration and W9 hardware remain deferred.
+The [pause checkpoint](scarthgap-maintenance-a-pause-20261028.md) preserves the earlier `7f9d2899…` stop and eight-repository publication. New resume fixes are committed locally and remain unpublished. Historical source9 and earlier receipts/artifacts remain unchanged. The software qualification itself made no hardware or firmware promotion. The later authorized October 29 controller-card preparation is recorded below; first physical boot remains pending. Yocto 6, license work and broad W7 vendor/BSP/media migration remain deferred.
 
 Authority: the [consolidated plan](scarthgap-consolidated-improvement-plan-20261028.md), integration lock/build policy, and owned product/BSP layers. The prior owner Python upgrades are the preserved foundation: recovered Decryptortuning/PORT sources → source9 pins → these reviewed candidate commits/owned-layer patches. No fresh generic upstream/PyPI replacement discards that work. Apparent DroneKit version increases correct stale recipe labels on code already present.
 
@@ -21,7 +21,7 @@ The [180-unit update investigation](scarthgap-package-update-investigation-20261
 | W6 | Maintained libusb1.0.27/posix-ipc1.2 and stdlib monotonic replacement are installed. Actual ARM TLS/IPC/NumPy, retained-fork imports, FollowShot ROI and nine DroneKit/Solo/legacy-wire methods pass. | Full modern PyMAVLink version-floor compliance and hardware/throughput compatibility are not established. |
 | W7 | Separate vendor/BSP/media cohort remains deferred. | Retained kernel/NXP/media pins are not security-clear; drone capture/reset/routing and VPU/DMA/GPU/audio migration remain open. |
 | W8 | Four builds, sixteen baseline checks, four expanded ARM suites, 145-case host aggregate, packaging/signature/cache regressions and independent offline recovery completed. | Cached dependencies/rootfs were reused. One certificate-fixture failure after a WSL clock step passed an unchanged strict retry; both attempts remain evidence. CVE applicability has explicit residuals. |
-| W9 | Hardware acceptance remains deferred. | No SD writes, controller/router changes, firmware update or flashing in this resumed session. |
+| W9 | User subsequently authorized controller bench preparation; the identified SD card is written, readback-verified and freshly provisioned. | Physical boot/network/serial acceptance remains pending. No STM32 flashing; no router settings changed. See the later card handoff below. |
 
 ## Exact maintenance sources and security exceptions
 
@@ -142,6 +142,51 @@ The scanner's Patched status includes versions outside affected ranges; it is no
 
 [Official OpenSSL 3.5 release notes](https://openssl-library.org/news/openssl-3.5-notes/) confirm 3.5.9 as a September 29 security patch release, with its most severe fixed issue rated High. A reviewed same-family 3.5.9 recipe/backport and repeat qualification are the immediate crypto follow-up; no change to the frozen 3.5.8 candidate is implied. Python 3.12.16/additional backports, actual SSH client/server applicability, corrected GStreamer product mapping and the separate retained kernel/media cohort remain explicit follow-ups. Yocto 6 and license work remain deferred.
 
-No hardware, controller/router SSH configuration, SD writes or STM32 flashing occurred during this resumed qualification. The older published checkpoint is distinct from these new local commits and unflashed artifacts.
+No hardware, controller/router SSH configuration, SD writes or STM32 flashing occurred during the software qualification. The older published checkpoint is distinct from these new local commits and the artifacts that were then unflashed. The subsequent authorized card preparation is a separate operation below.
 
 Recovery inputs are separate: [Git/firmware transport](/home/jresp/solo/recovery/scarthgap-maintenance-a-20261028/source-transport-7055fbe57381) and the independently copied [standard downloads](/home/jresp/Active_GH/opensolo-maintenance-a-qualification-7055fbe57381/workspace/yocto-cache/downloads). Retain both when preserving this recovery set. Git bundles alone do not contain ordinary source archives; fetch-only success does not establish a clean compilation on another host.
+
+## October 29 controller SD preparation — first physical boot pending
+
+After software qualification, the user explicitly approved overwriting the attached
+7,948,206,080-byte controller card, Windows Disk 4 / WSL `/dev/sdf`, in USB reader
+`05e3:0764`, serial `000000002961`, LUN 1. No card backup was requested or taken.
+The write actor rechecked the exact device identity, unchanged original partition
+layout and source bytes before opening the card exclusively. Source/actor hashes
+and the actual producer/consumer review were frozen before execution in
+[execution-gate.json](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/execution-gate.json).
+
+The preserved Controller Development image for graph `7055fbe57381…` was written
+and all 180,356,096 bytes passed stream-only readback after block-cache
+invalidation, SHA256 `d5f8c4c6e4fde132852081d06cb0b4212cea94622e4515d31771337ea20ec2ec`.
+The pinned production initramfs functions then created the normal fresh four-partition
+layout offline and seeded LATEST from GOLDEN. This used native WSL utilities and
+an adapter that invokes only provisioning/seed functions, never boot dispatch.
+Both slots' four payload hashes match the qualified boot manifest, raw U-Boot
+matches, and all four read-only filesystem checks returned zero.
+
+Fresh RWFS settings use the installed Wi-Fi helper and canonical secret-free
+templates. The read-only OpenWrt query supplied the selected 2.4 GHz WPA2 network;
+credentials remain private, with no router settings changed. Station mode is
+enabled, SoloLink AP mode is disabled, DHCP hostname is `opensolo-controller`, and
+the actual next-boot Wi-Fi merge preserved the provisioned credentials. The
+installed offline provisioner generated a fresh host identity on the card and
+installed the existing workstation administrator public key. Only its public host
+key was read into workstation staging and pinned for the existing SSH alias;
+strict host-key checking remains enabled. No private host key was exported.
+No old overlay was restored and no programs are shadowed by the fresh overlay.
+
+All filesystems were unmounted, card buffers flushed and the reader detached from
+WSL. Evidence: [card-complete.json](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/card-complete.json),
+[settings-complete.json](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/settings-complete.json)
+and [image-readback.json](/home/jresp/solo/.integration/controller-card-preflight-20261029T141456Z/image-readback.json).
+Partition/settings provisioning changes the original SD-image bytes after the
+successful readback; no final whole-card/source-image hash equality is claimed.
+Offline provisioning does not test the physical blank-card first-boot path.
+
+Next acceptance is actual controller boot, fresh-image Wi-Fi/SSH, reboot stability,
+service logs and normal i.MX–STM32 communication. STM32 firmware is unchanged;
+there are no automatically discoverable MCU firmware candidates or enable/force
+markers. No MCU ROM/programming operation occurred. The development firmware's
+normal idle shutdown remains until a separate Artoo bench deployment is selected.
+The software candidate's recorded security findings remain unresolved.

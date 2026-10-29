@@ -2,7 +2,7 @@
 
 The OpenSolo port builds controller and drone images on Yocto 5 Scarthgap, Linux 6.6.52 and U-Boot 2024.04 in native Ubuntu WSL2. Maintenance A resumed after the WSL restart and completed local software qualification on October 29, 2026: four builds, sixteen image/initramfs/userspace/maintenance checks, four expanded ARM runtime suites, matching cached-rootfs packaging repeats and independent offline source recovery. The [maintenance ledger](scarthgap-maintenance-a-20261028.md) records exact sources, results and limits.
 
-The current graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`. The CVE task closures completed against the recorded current NVD snapshot, but the security review retains findings and coverage gaps. OpenSSL 3.5.9 follow-up, retained kernel/media updates and remaining applicability work are documented in the ledger. Passing software checks does not establish security clearance, a clean full rebuild or hardware acceptance. The physical controller and STM32 installation are unchanged. New resume-fix commits are local and unpublished; the earlier pause checkpoint was pushed separately. Yocto 6 and license work remain deferred.
+The current graph is `7055fbe5738126848417be71d94a1e4fb6b83a7c507287527bce2ae2e3babf48`. The CVE task closures completed against the recorded current NVD snapshot, but the security review retains findings and coverage gaps. OpenSSL 3.5.9 follow-up, retained kernel/media updates and remaining applicability work are documented in the ledger. Passing software checks does not establish security clearance, a clean full rebuild or hardware acceptance. On October 29, the explicitly authorized controller SD card received the development image, verified readback and fresh offline Wi-Fi/SSH provisioning. Its first controller boot remains pending; STM32 firmware is unchanged. New resume-fix commits are local and unpublished; the earlier pause checkpoint was pushed separately. Yocto 6 and license work remain deferred.
 
 ## Current locally qualified artifacts
 
@@ -21,7 +21,7 @@ Source9 graph `36f841398e89201e2e462391cfa2779188349999090295c8b91c967f29380138`
 has four builds, sixteen image/initramfs/ARM checks, 82 relevant tests, matching
 cached-rootfs packaging repeats and 34 independently restored Git stores.
 This is not a clean full rebuild, comprehensive CVE review or hardware acceptance.
-The physical controller still uses its older rootfs/overlay and no-MSI kernel.
+Those software results did not install a new physical-controller baseline.
 
 | Profile | Preserved SD SHA-256 |
 |---|---|
