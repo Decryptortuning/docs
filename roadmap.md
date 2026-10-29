@@ -46,7 +46,7 @@ profile's immutable source contract.
 
 ## Controller hardware acceptance
 
-The physical card runs Maintenance A graph7055 with the qualified nomsi kernel,
+The last observed running controller uses Maintenance A graph7055 with the qualified nomsi kernel,
 Wi-Fi/DHCP/key-only SSH and unchanged OpenSolo-4dev MCU firmware. Latest local
 software graphbe98 includes the MAVLink/Python modernization and R01–R04 Linux
 fixes, with all four profiles qualified in software; see the
@@ -95,3 +95,7 @@ also need an explicit policy for devices retaining saved raw environments.
 Retain vulnerability/build evidence and resolve findings according to the owned
 release policy. A locally built bring-up image is not a production qualification.
 License review remains deferred for the user's later pre-publication work.
+
+## October29 next hardware session
+
+The approved controller SD now contains be98 with fresh188MiB GOLDEN/LATEST and offline LAN/SSH provisioning; image readback, payload and filesystem checks pass. First boot is pending. Verify actual VERSION, stable Wi-Fi/SSH and expected MCU identity, then R01 dedicated log routing, R02 effective rotation arguments, R03 clock-source/owner/runlevel behavior and R04 absence of console ownership warnings. Keep STM32 flashing, watchdog arming and memory/stack tuning separate from this Linux boot check. See the [card preparation ledger](scarthgap-maintenance-a-20261028.md#october29-be98-controller-card-prepared--boot-pending).
