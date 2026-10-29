@@ -1,0 +1,17 @@
+# Current MAVLink library modernization — October 29
+
+Status: local candidate in build qualification. The deployed controller and last fully qualified four-profile graph remain 7055fbe57381. No hardware changes or publication have occurred in this maintenance pass.
+
+The owner's Python 3 port remains the foundation. This pass moves the underlying PyMAVLink runtime and generator to released 2.4.50, while preserving the legacy Solo protocol in a separately named `solo` dialect. DroneKit2.9.2 and DroneKit-Solo1.3.0 already match current upstream runtime source; their existing Python3 repairs remain, with explicit Solo enum imports. Current standard dialects remain independently available. The historical GPS_ACCURACY225 and modern standard EFI_STATUS225 must never be interpreted through one global merged schema.
+
+The canonical released archive is checksum-pinned rather than a moving Git head. fastCRC0.5.0 supplies native CRC acceleration; native Maturin1.16.0 builds its Rust extension. The official Scarthgap Rust mixin is pinned at868a66da39f2ddbbffaf3e2540c45659558e8301, supplying Rust1.89.0 and its paired librsvg2.61.0 provider. Yocto6, NXP BSP/media upgrades and license work remain deferred. LLVM build concurrency is bounded to12 compilation jobs/one link job with ARM/X86 targets; ordinary build concurrency remains enabled.
+
+Pythonv1/v2 and C v1 headers now come from one owned XML closure and current generator. SoloLink uses recipe-provided headers; generated vendored headers were removed from app source. Ten missing XML descriptions were added to satisfy strict modern schema validation. The additive mission-type enum supports current waypoint helpers; it does not advertise new vehicle capabilities. Optional modern waypoint color/mode lookups respect absent legacy enums. Lossless char-field text access, raw NUL/non-ASCII backing, payload `name` metadata and accepted-heartbeat cache behavior are retained.
+
+The independent fixture preserves166 message IDs, names, field layouts, lengths and CRC extras from the old C headers/XML, plus567 old enum values. Eleven actual host-library tests pass, including all256 CRC-extra bytes, native CRC selection, complete independent frames, fragmentation/bad-CRC recovery, DroneKit/SoloVehicle construction and callbacks, mission commands and GoPro/gimbal paths. These are host results; ARM extension provenance, compiled C wire probes and four image profiles remain pending. Strict schema/patch validation caught earlier incompatibilities; failed waves and repairs are preserved rather than weakened.
+
+Current candidate graph: `5f5eaa189d3776c4829bfd3f13f24e59008d0195a715e9f6a7edec1786e33fef`.
+
+Evidence: [current receipt](/home/jresp/solo/.integration/mavlink-modernization-20261029T151457Z), [source/checker gate](/home/jresp/solo/.integration/mavlink-modernization-20261029T151457Z/source-freeze-6.json), [host consumer log](/home/jresp/solo/.integration/mavlink-modernization-20261029T151457Z/wave5-host-consumers.log). Source repositories are locally committed on `codex/mavlink-modernization`; the integration lock binds the combined candidate. Qualification is not yet complete, and no flight/hardware acceptance is implied.
+
+ROS2/RAS-A research is separate: [investigation](ros2-rasa-investigation-20261029.md). Its first recommended experiment is an offboard, receive-only ROS2 gateway using replay/simulator data. No ROS packages or RAS-A dialects were added to the product.

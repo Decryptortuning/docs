@@ -37,6 +37,8 @@ is active; meta-solo is inactive inventory. `build_input:false` lock entries are
 unchecked provenance inventory, including docs, scripts and Artoo source; the
 selected staged Artoo artifact has its own byte authority.
 
+The [current MAVLink modernization candidate](mavlink-modernization-20261029.md) is undergoing separate local qualification. The [ROS2/RAS-A investigation](ros2-rasa-investigation-20261029.md) records a separate offboard-first research path. Neither replaces the qualified artifact identities above.
+
 ## Project guides
 
 | Guide | Purpose |
