@@ -41,6 +41,10 @@ selected staged Artoo artifact has its own byte authority.
 
 The preceding [MAVLink modernization candidate](mavlink-modernization-20261029.md), graph `28fd826a52ca4accf0743f3ef3492ae2fe87e608bcb9adc8f4509abc635db244`, now passes four builds, sixteen baseline checks, four ARM runtime suites and four C wire suites. Its preserved artifacts are local and unflashed. The [ROS2/RAS-A investigation](ros2-rasa-investigation-20261029.md) records a separate offboard-first research path. The new local candidate and the deployed controller baseline have separate artifact identities.
 
+## Next Artoo modernization pass
+
+The [October29 modernization plan](artoo-modernization-plan-20261029.md) consolidates three fresh runtime, tooling/vendor and protocol reviews. It specifies diagnostics, a confirmed Linux forwarding-filter correction, CMake/build provenance, separate dependency evaluations, bounded waits and a pinned embedded MAVLink1 refresh. Persistence and active watchdog recovery retain explicit design/hardware gates. This is a local planning result; no new firmware qualification or deployment occurred.
+
 ## Project guides
 
 | Guide | Purpose |
