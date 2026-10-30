@@ -45,6 +45,8 @@ The preceding [MAVLink modernization candidate](mavlink-modernization-20261029.m
 
 The [October29 plan](artoo-modernization-plan-20261029.md) now has a [completed local implementation report](artoo-modernization-result-20261029.md). Diagnostics, forwarding correction, CMake parity, isolated dependency comparisons, bounded clock/ADC/battery initialization and embedded MAVLink generation are qualified within the recorded software scope. The [October30 follow-up](artoo-recovery-result-20261030.md) implements the journal, SRAM containment and experimental bench watchdog. Selective CMSIS adoption and physical acceptance remain later gates.
 
+The [battery and controller runtime follow-ups](artoo-battery-controller-followups-20261030.md) are saved for a later implementation pass at the user’s request. They remain open while preparing the current qualified firmware for installation.
+
 ## Project guides
 
 | Guide | Purpose |
