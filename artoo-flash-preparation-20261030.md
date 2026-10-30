@@ -1,6 +1,12 @@
 # Artoo journal firmware flash preparation — October 30
 
-## First boot verified; reset/ROM preflight remains
+## Current readiness: controlled reset/ROM preflight passed
+
+**Controlled STM32 reset/ROM preflight passed:** On Linux graph `5b00a161…`, the permanent BSP power holds kept the i.MX on the same boot through ROM entry and application release. Full 256 KiB flash readback, repeated reserved-page/vector reads, exact original firmware identity and 20 post-release parameter replies pass. Erase/write/Go/protection commands were blocked. MCU `4803457` remains installed; selected `629c14b` remains local and unflashed. [Result](artoo-permanent-rom-preflight-20261030.md).
+
+Steps1–3 below are now complete. Step4 remains a separately authorized firmware installation.
+
+## Earlier first-boot checkpoint
 
 **New controller Linux first boot verified:** The physical controller now runs graph `5b00a161…` with Wi-Fi/DHCP and strict-key SSH at192.168.2.207. The permanent power driver is bound, GPIO19/21 are owned high, and effective loader/updater hashes match qualification. The sole UART1 bridge reports unchanged MCU4803457 bench;20 identical172-byte parameter replies match the saved factory record. Automatic MCU updates remain disabled. This establishes scoped first-boot/application-link acceptance, not STM32 reset/ROM or flashing readiness. [Boot receipt](/home/jresp/solo/.integration/controller-card-preflight-20261030T174903Z/boot-check-20261030T180422Z/qualification.json).
 
