@@ -1,5 +1,9 @@
 # Artoo modernization: second research and implementation plan
 
+**Implementation status:** see the [local qualification result](artoo-modernization-result-20261029.md). Waves A–D and F are implemented/evaluated; wave E bounds clock/ADC/battery initialization, with flash-BSY recovery explicitly deferred pending RAM execution/failure-policy design. CMSIS, persistence, watchdog and physical gates remain open. The planning baseline and unresolved archive note below are historical; the result records the subsequently resolved Arm archive and final candidates.
+
+## Original planning snapshot
+
 October 29, 2026. Three fresh research agents reviewed runtime reliability,
 tooling/vendor updates and protocol integration. The parent reviewed the actual
 startup, flash, task, build and Linux forwarding code and consolidated this plan.

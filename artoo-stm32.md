@@ -1,5 +1,13 @@
 # Artoo STM32 controller firmware
 
+## Current local modernization candidate — October29
+
+The [Artoo modernization implementation](artoo-modernization-result-20261029.md) is the latest local software candidate. Artoo `d3cc937` adds retained fault/runtime diagnostics, bounded startup, a verified modern MAVLink1 export and CMake provenance. The selected isolated Arm15.3/Pillow13 candidate passes all six profiles and production/bench DVT each pass13 Renode scenarios. Linux graph `e0dafae6…` includes the diagnostic bridge, forwarding fix and prior permanent power-hold BSP; all four builds and16 baseline checks pass. Exact artifacts and source/checker identities are preserved. No hardware changes, flashing or pushes occurred; deployed Linux/MCU identities remain unchanged. Flash-stall recovery, persistence/watchdog design and physical acceptance remain open.
+
+Use the [qualified reproduction instructions](/home/jresp/solo/.integration/artoo-modernization-20261030T031656Z/tooling8/reproduction.md) for the isolated newer compiler/Pillow environment and required MAVLink export. CMake/Ninja is now the maintained build graph. Plain wrapper defaults still use baseline GCC13.2/Pillow10.2; selecting the qualified newer tools is explicit. The source and artifact identities in the linked result supersede the historical build instructions below.
+
+## Earlier bring-up and deployment records
+
 **Latest local BSP candidate:** [permanent power-hold and updater startup fix](controller-power-fix-20261029.md), graph7bac1220…, passes four builds and16 baseline checks. Controller U-Boot asserts holds; Linux owns them until final power-off. Startup verification resynchronizes within a deadline and programming requires the bound driver. This candidate is not installed; current physical Linux/MCU remain unchanged.
 
 **Latest physical MCU state:** [OpenSolo5 bench firmware installed](artoo-flash-result-20261029.md) after explicit authorization using temporary GPIO19/21 holds. Full readback/page127 preservation and settled exact-version/calibration/bridge checks pass; controls are released. Linux remains be98 plus its Chrony correction. Permanent BSP/updater power handling remains pending.
@@ -14,7 +22,7 @@ Updated October 28, 2026. Native builds and software regression checks work in
 WSL. The original recovery research is retained below as a historical snapshot.
 No MCU programming or physical debugger connection has occurred.
 
-## Current working build
+## Historical working build before CMake migration
 
 Primary checkout: `/home/jresp/Active_GH/artoo-firmware`, branch `codex/artoo-wsl`,
 revision `48034572145e9e62dff881141277564e1ed1d3a6`. The recovered
