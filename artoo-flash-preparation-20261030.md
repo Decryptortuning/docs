@@ -1,5 +1,11 @@
 # Artoo journal firmware flash preparation — October 30
 
+## Authorized card installation completed; first boot pending
+
+**Controller card prepared, boot pending:** The authorized7.95GB card now contains controller-development graph `5b00a161…`, including permanent power holds and journal-aware tools. Full image readback, both boot slots, raw U-Boot and four filesystem checks pass. Fresh station-only Wi-Fi/SSH is provisioned and the new public host key is pinned. No SD backup was made; automatic Artoo updates remain disabled and STM32 is unchanged. The reader is detached from WSL. This is a prepared card, not yet a verified running Linux baseline. [Installation receipt](/home/jresp/solo/.integration/controller-card-preflight-20261030T174903Z/card-complete.json).
+
+The earlier preparation observations below are historical. Next, boot this card and verify the running graph, effective loader/updater hashes and bound power-hold driver before any separately authorized STM32 reset/programming.
+
 Preparation is complete locally; live readiness is not established. No device files, GPIOs, services, boot markers or firmware were changed. The user asked to prepare, not to start programming. Battery/controller implementation work is [saved and deferred](artoo-battery-controller-followups-20261030.md).
 
 ## Selected artifacts
