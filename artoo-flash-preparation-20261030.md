@@ -1,6 +1,12 @@
 # Artoo journal firmware flash preparation — October 30
 
-## Current readiness: controlled reset/ROM preflight passed
+## Installation completed
+
+**Artoo journal firmware installed and verified:** The physical HW3 controller now runs `5.0.0-dev+g629c14b71ce6-bench-noidle` on Linux graph `5b00a161…`. Full flash readback passed; both 2 KiB reserved pages and all 172 parameter bytes are unchanged. The original serial bridge and diagnostic interface work, and Linux stayed on the same boot. Experimental watchdog and idle shutdown remain disabled. [Installation result](artoo-journal-flash-result-20261030.md).
+
+All five preparation/installation steps below are complete within the documented acceptance scope. Earlier checkpoints are preserved as history.
+
+## Earlier readiness: controlled reset/ROM preflight passed
 
 **Controlled STM32 reset/ROM preflight passed:** On Linux graph `5b00a161…`, the permanent BSP power holds kept the i.MX on the same boot through ROM entry and application release. Full 256 KiB flash readback, repeated reserved-page/vector reads, exact original firmware identity and 20 post-release parameter replies pass. Erase/write/Go/protection commands were blocked. MCU `4803457` remains installed; selected `629c14b` remains local and unflashed. [Result](artoo-permanent-rom-preflight-20261030.md).
 
